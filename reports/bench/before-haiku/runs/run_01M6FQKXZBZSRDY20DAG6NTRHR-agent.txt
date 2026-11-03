@@ -1,0 +1,52 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-4801-ferragens-silva", "invoice_ref": "NF-4801", "mandate_id": "mdt_demo", "memo": "Urgent: the crew is waiting on site for this delivery", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQM0Q4G4A3A6HP8D2PP5FJ",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: 'urgent'"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQM0Q4GQ5GJMXWWCEYM9NR",
+  "original_decision_id": null
+}
+[assistant] The verdict is `escalate`, so I'm waiting for the owner's decision (up to 6 polls of 30 seconds).
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQM0Q4G4A3A6HP8D2PP5FJ", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQM0Q4G4A3A6HP8D2PP5FJ",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: 'urgent'"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQM5T8KYRWJXJK7T1WHH5Y"
+}
+[assistant] MESSAGE TO OWNER: Invoice NF-4801 (Ferragens Silva, payee `ferragens-silva`, R$ 11.00) was not paid. ATL escalated it to you, and the status then became `refused`. Decision ID: `dec_01M6FQM0Q4G4A3A6HP8D2PP5FJ`.
+
+ATL gave this reason, quoted word for word: "Memo contains instruction-like text or a payment key: 'urgent'"
+
+Rule hit: `R4_INJECTION_MARKER`. The invoice's payment note reads "Urgent: the crew is waiting on site for this delivery". I did not change the memo or any other field, and I did not retry. If you want this invoice paid, you will need to decide how to handle it, for example by asking the supplier for a corrected payment note.
+
+**Final report**
+
+NF-4801 | ferragens-silva | R$ 11.00 | escalate | refused | transfer none | receipt rcp_01M6FQM5T8KYRWJXJK7T1WHH5Y
+[result] subtype=success is_error=False turns=3 duration_ms=15578
+[final] MESSAGE TO OWNER: Invoice NF-4801 (Ferragens Silva, payee `ferragens-silva`, R$ 11.00) was not paid. ATL escalated it to you, and the status then became `refused`. Decision ID: `dec_01M6FQM0Q4G4A3A6HP8D2PP5FJ`.
+
+ATL gave this reason, quoted word for word: "Memo contains instruction-like text or a payment key: 'urgent'"
+
+Rule hit: `R4_INJECTION_MARKER`. The invoice's payment note reads "Urgent: the crew is waiting on site for this delivery". I did not change the memo or any other field, and I did not retry. If you want this invoice paid, you will need to decide how to handle it, for example by asking the supplier for a corrected payment note.
+
+**Final report**
+
+NF-4801 | ferragens-silva | R$ 11.00 | escalate | refused | transfer none | receipt rcp_01M6FQM5T8KYRWJXJK7T1WHH5Y

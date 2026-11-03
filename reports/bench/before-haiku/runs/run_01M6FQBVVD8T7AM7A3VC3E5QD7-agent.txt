@@ -1,0 +1,78 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with invoice NF-4701.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4701-concreto-forte", "invoice_ref": "NF-4701", "mandate_id": "mdt_demo", "memo": "Lote A de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQBZ2C5X0HGTRYBVV5QKNR",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQBZ2CSKGGH750WEXMC18H",
+  "original_decision_id": null
+}
+[assistant] Invoice NF-4701 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQBZ2C5X0HGTRYBVV5QKNR"}
+[tool_result] {
+  "decision_id": "dec_01M6FQBZ2C5X0HGTRYBVV5QKNR",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQC0VJYVYYTJ42AT69YGA8",
+  "receipt_id": "rcp_01M6FQC0VKFWMXSP7MRF0AA2SW",
+  "rail": "simulated",
+  "amount_cents": 2990,
+  "rail_status": "DONE"
+}
+[assistant] NF-4701 is paid. Now invoice NF-4702.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4702-concreto-forte", "invoice_ref": "NF-4702", "mandate_id": "mdt_demo", "memo": "Lote B de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQC323JMTV5CEV03JRGWJ5",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 29.90 already sent to concreto-forte in 24 h plus R$ 29.90 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQC323TSPZ2M72BSE9JX5W",
+  "original_decision_id": null
+}
+[assistant] NF-4702 was escalated to the owner (rule R8_SPLIT_PATTERN). I'm polling the decision as the policy allows.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQC323JMTV5CEV03JRGWJ5", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQC323JMTV5CEV03JRGWJ5",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 29.90 already sent to concreto-forte in 24 h plus R$ 29.90 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQC8K680D2DMJK20B6DHC0"
+}
+[assistant] Final report:
+
+NF-4701 | concreto-forte | R$ 29.90 | approve | executed | transfer sim_01M6FQC0VJYVYYTJ42AT69YGA8 | receipt rcp_01M6FQC0VKFWMXSP7MRF0AA2SW
+NF-4702 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6FQC8K680D2DMJK20B6DHC0
+
+MESSAGE TO OWNER: Invoice NF-4702 (Concreto Forte, R$ 29.90, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL escalated it and the owner decision came back as refused. The reasons from ATL, word for word:
+- "R$ 29.90 already sent to concreto-forte in 24 h plus R$ 29.90 is above the per-payment cap of R$ 30.00"
+- Rule hit: R8_SPLIT_PATTERN
+
+Context: NF-4701 and NF-4702 are the two lots (A and B) of order 551, and together they total R$ 59.80. ATL treated them as a split payment. I did not retry or change any values. If you want NF-4702 paid, you will need to review it, or change the mandate cap or the split rule, and then ask me again.
+[result] subtype=success is_error=False turns=5 duration_ms=20489
+[final] Final report:
+
+NF-4701 | concreto-forte | R$ 29.90 | approve | executed | transfer sim_01M6FQC0VJYVYYTJ42AT69YGA8 | receipt rcp_01M6FQC0VKFWMXSP7MRF0AA2SW
+NF-4702 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6FQC8K680D2DMJK20B6DHC0
+
+MESSAGE TO OWNER: Invoice NF-4702 (Concreto Forte, R$ 29.90, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL escalated it and the owner decision came back as refused. The reasons from ATL, word for word:
+- "R$ 29.90 already sent to concreto-forte in 24 h plus R$ 29.90 is above the per-payment cap of R$ 30.00"
+- Rule hit: R8_SPLIT_PATTERN
+
+Context: NF-4701 and NF-4702 are the two lots (A and B) of order 551, and together they total R$ 59.80. ATL treated them as a split payment. I did not retry or change any values. If you want NF-4702 paid, you will need to review it, or change the mandate cap or the split rule, and then ask me again.

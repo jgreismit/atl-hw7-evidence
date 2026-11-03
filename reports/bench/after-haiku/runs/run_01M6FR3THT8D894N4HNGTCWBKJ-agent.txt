@@ -1,0 +1,64 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3X6AYYQT8Z92917ABNRB",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FR3X6APA4RBMQFRMHDZ4QJ",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FR3X6AYYQT8Z92917ABNRB"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3X6AYYQT8Z92917ABNRB",
+  "status": "executed",
+  "transfer_id": "sim_01M6FR3XVW4QVSXWE9MZCNVB6D",
+  "receipt_id": "rcp_01M6FR3XVXHYF4GQMSY73Z21PX",
+  "rail": "simulated",
+  "amount_cents": 1200,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Invoice 2 carries the same invoice number and payee, so I'll run it through `pay_check` with the values from its own text and let ATL decide.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Segunda via. Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR4068XC1D9N3HFBWDAHN2",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6FR3X6AYYQT8Z92917ABNRB"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6FR4069381J2FJXMG5RE74D",
+  "original_decision_id": "dec_01M6FR3X6AYYQT8Z92917ABNRB"
+}
+[assistant] MESSAGE TO OWNER: Invoice NF-2901 (second copy, "Segunda via", Concreto Forte) was not paid. ATL refused it, so I did not call `execute_payment` and did not retry.
+
+ATL reasons, quoted word for word:
+- Rule hit: `R5_DUPLICATE`
+- "Idempotency key already used by decision dec_01M6FR3X6AYYQT8Z92917ABNRB"
+
+Invoice NF-2901 was already paid once, under decision `dec_01M6FR3X6AYYQT8Z92917ABNRB` (transfer `sim_01M6FR3XVW4QVSXWE9MZCNVB6D`). The second copy has the same invoice number, payee, Pix key and amount (R$ 12.00), and only a different payment note. Please confirm whether this is a genuine second invoice or a duplicate before anything else is paid against it.
+
+**Final report**
+
+NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FR3XVW4QVSXWE9MZCNVB6D | receipt rcp_01M6FR3XVXHYF4GQMSY73Z21PX
+NF-2901 | concreto-forte | R$ 12.00 | refuse | refused | transfer none | receipt rcp_01M6FR4069381J2FJXMG5RE74D
+[result] subtype=success is_error=False turns=4 duration_ms=10876
+[final] MESSAGE TO OWNER: Invoice NF-2901 (second copy, "Segunda via", Concreto Forte) was not paid. ATL refused it, so I did not call `execute_payment` and did not retry.
+
+ATL reasons, quoted word for word:
+- Rule hit: `R5_DUPLICATE`
+- "Idempotency key already used by decision dec_01M6FR3X6AYYQT8Z92917ABNRB"
+
+Invoice NF-2901 was already paid once, under decision `dec_01M6FR3X6AYYQT8Z92917ABNRB` (transfer `sim_01M6FR3XVW4QVSXWE9MZCNVB6D`). The second copy has the same invoice number, payee, Pix key and amount (R$ 12.00), and only a different payment note. Please confirm whether this is a genuine second invoice or a duplicate before anything else is paid against it.
+
+**Final report**
+
+NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FR3XVW4QVSXWE9MZCNVB6D | receipt rcp_01M6FR3XVXHYF4GQMSY73Z21PX
+NF-2901 | concreto-forte | R$ 12.00 | refuse | refused | transfer none | receipt rcp_01M6FR4069381J2FJXMG5RE74D

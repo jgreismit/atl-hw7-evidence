@@ -1,0 +1,49 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Invoice 1 first. Invoice 2 has the same invoice_ref and idempotency key, but the policy says to finish one invoice before starting the next.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQWMRCCVB8886PVCKB5PKD",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQWMRCCQ9SFA846FW3T717",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQWMRCCVB8886PVCKB5PKD"}
+[tool_result] {
+  "decision_id": "dec_01M6FQWMRCCVB8886PVCKB5PKD",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQWPBH1NPNWXAC5XAGD5G1",
+  "receipt_id": "rcp_01M6FQWPBJPQQ03TPNKRCKZNFN",
+  "rail": "simulated",
+  "amount_cents": 1200,
+  "rail_status": "DONE"
+}
+[assistant] Now invoice 2. The policy says to call pay_check first and let ATL decide.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Segunda via. Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQWRXT07RRPG4FJBTSK2YK",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6FQWMRCCVB8886PVCKB5PKD"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6FQWRXTF1JDCGCQW2HDSNTQ",
+  "original_decision_id": "dec_01M6FQWMRCCVB8886PVCKB5PKD"
+}
+[assistant] NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQWPBH1NPNWXAC5XAGD5G1 | receipt rcp_01M6FQWPBJPQQ03TPNKRCKZNFN
+NF-2901 (second copy, "Segunda via") | concreto-forte | R$ 12.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6FQWRXTF1JDCGCQW2HDSNTQ
+
+MESSAGE TO OWNER: Invoice NF-2901 (second copy, payment note "Segunda via. Cimento, pedido 4480") from Concreto Forte for R$ 12.00 was not paid. ATL refused it with rule R5_DUPLICATE. The reason returned was: "Idempotency key already used by decision dec_01M6FQWMRCCVB8886PVCKB5PKD". The first copy of NF-2901 was paid once, for R$ 12.00, so no money was sent twice.
+[result] subtype=success is_error=False turns=4 duration_ms=14439
+[final] NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQWPBH1NPNWXAC5XAGD5G1 | receipt rcp_01M6FQWPBJPQQ03TPNKRCKZNFN
+NF-2901 (second copy, "Segunda via") | concreto-forte | R$ 12.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6FQWRXTF1JDCGCQW2HDSNTQ
+
+MESSAGE TO OWNER: Invoice NF-2901 (second copy, payment note "Segunda via. Cimento, pedido 4480") from Concreto Forte for R$ 12.00 was not paid. ATL refused it with rule R5_DUPLICATE. The reason returned was: "Idempotency key already used by decision dec_01M6FQWMRCCVB8886PVCKB5PKD". The first copy of NF-2901 was paid once, for R$ 12.00, so no money was sent twice.

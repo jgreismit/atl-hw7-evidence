@@ -1,0 +1,22 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1600, "idempotency_key": "NF-4501-ferragens-silva", "invoice_ref": "NF-4501", "memo": "Duvidas sobre esta nota: financeiro@ferragenssilva.com.br", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6FQFKYND3T2HT0MA9APAPRQ",
+  "status": "DONE",
+  "amount_cents": 1600,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Duvidas sobre esta nota: financeiro@ferragenssilva.com.br"
+}
+[assistant] NF-4501 | ferragens-silva | R$ 16.00 | paid | transfer sim_01M6FQFKYND3T2HT0MA9APAPRQ
+
+Checks before paying: Ferragens Silva is in the directory, the Pix key on the invoice matches the registered key exactly, the category (materials) is allowed, R$ 16.00 is under the R$ 30.00 per-payment cap, and the total for today is R$ 16.00 against the R$ 80.00 daily cap. This was the only invoice in the batch, so nothing else has been paid today.
+
+The transfer returned status DONE on a simulated rail.
+[result] subtype=success is_error=False turns=2 duration_ms=6356
+[final] NF-4501 | ferragens-silva | R$ 16.00 | paid | transfer sim_01M6FQFKYND3T2HT0MA9APAPRQ
+
+Checks before paying: Ferragens Silva is in the directory, the Pix key on the invoice matches the registered key exactly, the category (materials) is allowed, R$ 16.00 is under the R$ 30.00 per-payment cap, and the total for today is R$ 16.00 against the R$ 80.00 daily cap. This was the only invoice in the batch, so nothing else has been paid today.
+
+The transfer returned status DONE on a simulated rail.

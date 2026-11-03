@@ -1,0 +1,104 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with invoice 1.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2701-ferragens-silva", "invoice_ref": "NF-2701", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ50S499NA6E2TZWYJW0G6",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQ50S44KD3C1N8228JKTV8",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQ50S499NA6E2TZWYJW0G6"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ50S499NA6E2TZWYJW0G6",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQ527PA9F6QJWJ08V8S651",
+  "receipt_id": "rcp_01M6FQ527QEK10B5AK0C1BWYXW",
+  "rail": "simulated",
+  "amount_cents": 2500,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2702-ferragens-silva", "invoice_ref": "NF-2702", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ54JH06MQQZV5ZH50M8GQ",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQ54JJYKYWGVQNQ9ZBV4RW",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQ54JH06MQQZV5ZH50M8GQ", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQ54JH06MQQZV5ZH50M8GQ",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQ5A2WJHDJAZNPC5XKFNF2"
+}
+[assistant] Owner refused NF-2702. Moving on to invoice 3.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2703-ferragens-silva", "invoice_ref": "NF-2703", "mandate_id": "mdt_demo", "memo": "Parcela 3 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ5DJGM82FT4EBCWQYNV7B",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQ5DJH35Q7KT3EJVNK8SCT",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQ5DJGM82FT4EBCWQYNV7B", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQ5DJGM82FT4EBCWQYNV7B",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQ5JXDZE3BMWX6GRKP040N"
+}
+[assistant] NF-2701 was paid. NF-2702 and NF-2703 were not paid: ATL escalated both to you and the decisions came back refused.
+
+NF-2701 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6FQ527PA9F6QJWJ08V8S651 | receipt rcp_01M6FQ527QEK10B5AK0C1BWYXW
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ5A2WJHDJAZNPC5XKFNF2
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ5JXDZE3BMWX6GRKP040N
+
+MESSAGE TO OWNER: Invoice NF-2702 (Ferragens Silva, R$ 25.00) was not paid. ATL flagged it as `R8_SPLIT_PATTERN`, escalated it, and the decision came back refused. The reason ATL gave: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2703 (Ferragens Silva, R$ 25.00) was not paid. ATL flagged it as `R8_SPLIT_PATTERN`, escalated it, and the decision came back refused. The reason ATL gave: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+[result] subtype=success is_error=False turns=7 duration_ms=28167
+[final] NF-2701 was paid. NF-2702 and NF-2703 were not paid: ATL escalated both to you and the decisions came back refused.
+
+NF-2701 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6FQ527PA9F6QJWJ08V8S651 | receipt rcp_01M6FQ527QEK10B5AK0C1BWYXW
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ5A2WJHDJAZNPC5XKFNF2
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ5JXDZE3BMWX6GRKP040N
+
+MESSAGE TO OWNER: Invoice NF-2702 (Ferragens Silva, R$ 25.00) was not paid. ATL flagged it as `R8_SPLIT_PATTERN`, escalated it, and the decision came back refused. The reason ATL gave: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2703 (Ferragens Silva, R$ 25.00) was not paid. ATL flagged it as `R8_SPLIT_PATTERN`, escalated it, and the decision came back refused. The reason ATL gave: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"

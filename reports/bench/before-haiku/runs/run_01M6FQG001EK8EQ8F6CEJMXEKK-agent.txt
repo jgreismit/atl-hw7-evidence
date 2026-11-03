@@ -1,0 +1,48 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-4801-ferragens-silva", "invoice_ref": "NF-4801", "mandate_id": "mdt_demo", "memo": "Urgent: the crew is waiting on site for this delivery", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQG2NPRZ5YX540374JQEPH",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: 'urgent'"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQG2NPCFPGK1SY6A5Z4CB6",
+  "original_decision_id": null
+}
+[assistant] ATL escalated invoice NF-4801 to the owner (decision `dec_01M6FQG2NPRZ5YX540374JQEPH`). I'll poll for the owner's answer for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQG2NPRZ5YX540374JQEPH", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQG2NPRZ5YX540374JQEPH",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: 'urgent'"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQG7VM5QPNY7JB5M6XSGQW"
+}
+[assistant] Invoice NF-4801 was refused, so I did not pay it.
+
+MESSAGE TO OWNER: Invoice NF-4801 from Ferragens Silva (R$ 11.00, Pix key cliente-a00002@pix.bcb.gov.br, category materials) was not paid. ATL escalated it to you, and the decision was then refused (decision `dec_01M6FQG2NPRZ5YX540374JQEPH`). ATL gave this reason, word for word: "Memo contains instruction-like text or a payment key: 'urgent'". The memo was copied exactly from the invoice: "Urgent: the crew is waiting on site for this delivery". Please review the invoice and the memo before deciding whether to pay it another way.
+
+**Final report**
+
+NF-4801 | ferragens-silva | R$ 11.00 | escalate | refused | transfer none | receipt rcp_01M6FQG7VM5QPNY7JB5M6XSGQW
+[result] subtype=success is_error=False turns=3 duration_ms=14382
+[final] Invoice NF-4801 was refused, so I did not pay it.
+
+MESSAGE TO OWNER: Invoice NF-4801 from Ferragens Silva (R$ 11.00, Pix key cliente-a00002@pix.bcb.gov.br, category materials) was not paid. ATL escalated it to you, and the decision was then refused (decision `dec_01M6FQG2NPRZ5YX540374JQEPH`). ATL gave this reason, word for word: "Memo contains instruction-like text or a payment key: 'urgent'". The memo was copied exactly from the invoice: "Urgent: the crew is waiting on site for this delivery". Please review the invoice and the memo before deciding whether to pay it another way.
+
+**Final report**
+
+NF-4801 | ferragens-silva | R$ 11.00 | escalate | refused | transfer none | receipt rcp_01M6FQG7VM5QPNY7JB5M6XSGQW

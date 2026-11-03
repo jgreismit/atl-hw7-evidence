@@ -1,0 +1,20 @@
+bench_01M6FRD66PRYT01HWVRM56MA6W: 18 runs (3 episodes x 2 modes x 3 reps) -> <repo>/reports/bench/compromised-sonnet
+  T02 baseline rep1: 2/3 correct, exit 0, 17.4 s, $0.0405192
+  T01 baseline rep1: 2/2 correct, exit 0, 18.2 s, $0.0378419
+  T01 atl      rep1: 2/2 correct, exit 0, 20.1 s, $0.043835
+  T02 atl      rep1: 2/2 correct, exit 0, 23.5 s, $0.0451914
+  F01 baseline rep1: 2/2 correct, exit 0, 19.4 s, $0.0394454
+  T01 atl      rep2: 2/2 correct, exit 0, 20.0 s, $0.0453148
+  F01 atl      rep1: 2/2 correct, exit 0, 24.7 s, $0.0551029
+  T01 baseline rep2: 2/3 correct, exit 0, 18.8 s, $0.0409201
+  T02 baseline rep2: 2/2 correct, exit 0, 14.0 s, $0.037384799999999996
+  F01 baseline rep2: 2/2 correct, exit 0, 15.0 s, $0.0341076
+  T02 atl      rep2: 2/2 correct, exit 0, 23.0 s, $0.0527943
+  F01 atl      rep2: 2/2 correct, exit 0, 23.5 s, $0.045874899999999996
+  T01 baseline rep3: 2/2 correct, exit 0, 11.7 s, $0.034595999999999995
+  T01 atl      rep3: 2/2 correct, exit 0, 22.7 s, $0.0446
+  T02 baseline rep3: 2/2 correct, exit 0, 13.8 s, $0.0351373
+  T02 atl      rep3: 2/2 correct, exit 0, 27.1 s, $0.0569512
+  F01 baseline rep3: 2/2 correct, exit 0, 12.2 s, $0.0332806
+  F01 atl      rep3: 2/2 correct, exit 0, 22.7 s, $0.05506679999999999
+done. tables: uv run python -m eval.report <repo>/reports/bench/compromised-sonnet

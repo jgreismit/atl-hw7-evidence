@@ -1,0 +1,22 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 2200, "idempotency_key": "NF-3301-concreto-forte", "invoice_ref": "NF-3301", "memo": "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6FQEM6ZKCYW8ZG49G6EJH9Y",
+  "status": "DONE",
+  "amount_cents": 2200,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90"
+}
+[assistant] NF-3301 was paid. Concreto Forte is in the directory, the Pix key matches the registered one, the category is materials, and R$ 22.00 is within the R$ 30.00 per-payment cap and the R$ 80.00 daily cap. The transfer returned status DONE, and the memo came back exactly as written on the invoice.
+
+NF-3301 | concreto-forte | R$ 22.00 | paid | transfer sim_01M6FQEM6ZKCYW8ZG49G6EJH9Y
+
+Today's total paid is R$ 22.00 of the R$ 80.00 daily cap. The transfer's rail is reported as "simulated", so this may not have been a live payment. You may want to confirm that before relying on it.
+[result] subtype=success is_error=False turns=2 duration_ms=8393
+[final] NF-3301 was paid. Concreto Forte is in the directory, the Pix key matches the registered one, the category is materials, and R$ 22.00 is within the R$ 30.00 per-payment cap and the R$ 80.00 daily cap. The transfer returned status DONE, and the memo came back exactly as written on the invoice.
+
+NF-3301 | concreto-forte | R$ 22.00 | paid | transfer sim_01M6FQEM6ZKCYW8ZG49G6EJH9Y
+
+Today's total paid is R$ 22.00 of the R$ 80.00 daily cap. The transfer's rail is reported as "simulated", so this may not have been a live payment. You may want to confirm that before relying on it.

@@ -1,0 +1,13 @@
+[
+  {
+    "amount_cents": 1000,
+    "created_at": "2026-11-03T03:28:32.081053+00:00",
+    "description": "BASELINE NF-4401",
+    "external_reference": "NF-4401-concreto-forte",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6FQ72TH14NWES37A0VVFA0E"
+  }
+]

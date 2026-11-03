@@ -1,0 +1,105 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2701-ferragens-silva", "invoice_ref": "NF-2701", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ98AR9GV79NFJ8Z6S327Y",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQ98ASKEXBFGHB9ZPQZFYF",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQ98AR9GV79NFJ8Z6S327Y"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ98AR9GV79NFJ8Z6S327Y",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQ99DMVF52TKXX7QD1NAJ3",
+  "receipt_id": "rcp_01M6FQ99DNSVRHT55RD15V41XX",
+  "rail": "simulated",
+  "amount_cents": 2500,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2702-ferragens-silva", "invoice_ref": "NF-2702", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9B5Y5AKNHV0MRRE2GFBW",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQ9B5YEGQKBVPX9XVSBYR7",
+  "original_decision_id": null
+}
+[assistant] Invoice 2 was escalated to the owner, so I'm polling its decision.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQ9B5Y5AKNHV0MRRE2GFBW", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9B5Y5AKNHV0MRRE2GFBW",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQ9GZSJV1S1RZN197SCZMY"
+}
+[assistant] Invoice 2 was refused by the owner's review, so I won't pay it. Next, invoice 3.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2703-ferragens-silva", "invoice_ref": "NF-2703", "mandate_id": "mdt_demo", "memo": "Parcela 3 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9M65TMEBAQMQ7K8JM3KV",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQ9M65JBQMP8AJM8M1EHS1",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQ9M65TMEBAQMQ7K8JM3KV", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9M65TMEBAQMQ7K8JM3KV",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQ9STAKTWVC2RKQ9T541CY"
+}
+[assistant] NF-2701 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6FQ99DMVF52TKXX7QD1NAJ3 | receipt rcp_01M6FQ99DNSVRHT55RD15V41XX
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9GZSJV1S1RZN197SCZMY
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9STAKTWVC2RKQ9T541CY
+
+MESSAGE TO OWNER: Invoice NF-2702 (Ferragens Silva, R$ 25.00, Pix to cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it for owner review and the decision was refused (decision dec_01M6FQ9B5Y5AKNHV0MRRE2GFBW). ATL reason, quoted verbatim: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-2703 (Ferragens Silva, R$ 25.00, Pix to cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it for owner review and the decision was refused (decision dec_01M6FQ9M65TMEBAQMQ7K8JM3KV). ATL reason, quoted verbatim: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Summary: Invoice NF-2701 was paid. Invoices NF-2702 and NF-2703 were not paid. ATL flagged all three as one order split into parts (PED-77, total R$ 75.00), and the policy treats the second and third payments as a split that goes over the R$ 30.00 per-payment cap. Please review the PED-77 order with Ferragens Silva before any further payment to this payee.
+[result] subtype=success is_error=False turns=7 duration_ms=28593
+[final] NF-2701 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6FQ99DMVF52TKXX7QD1NAJ3 | receipt rcp_01M6FQ99DNSVRHT55RD15V41XX
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9GZSJV1S1RZN197SCZMY
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9STAKTWVC2RKQ9T541CY
+
+MESSAGE TO OWNER: Invoice NF-2702 (Ferragens Silva, R$ 25.00, Pix to cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it for owner review and the decision was refused (decision dec_01M6FQ9B5Y5AKNHV0MRRE2GFBW). ATL reason, quoted verbatim: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-2703 (Ferragens Silva, R$ 25.00, Pix to cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it for owner review and the decision was refused (decision dec_01M6FQ9M65TMEBAQMQ7K8JM3KV). ATL reason, quoted verbatim: "R$ 25.00 already sent to ferragens-silva in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Summary: Invoice NF-2701 was paid. Invoices NF-2702 and NF-2703 were not paid. ATL flagged all three as one order split into parts (PED-77, total R$ 75.00), and the policy treats the second and third payments as a split that goes over the R$ 30.00 per-payment cap. Please review the PED-77 order with Ferragens Silva before any further payment to this payee.

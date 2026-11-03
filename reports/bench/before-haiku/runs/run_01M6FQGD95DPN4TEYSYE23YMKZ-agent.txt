@@ -1,0 +1,31 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[assistant] Invoice 1 passes every check: Concreto Forte is registered, the Pix key matches exactly, the category is materials, R$ 12.00 is under the cap, and the daily total stays at R$ 12.00. Paying it now.
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1200, "idempotency_key": "NF-2101-concreto-forte", "invoice_ref": "NF-2101", "memo": "Rebar delivery, invoice NF-2101", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6FQGHZWDM96WR07B9Z0SDSD",
+  "status": "DONE",
+  "amount_cents": 1200,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Rebar delivery, invoice NF-2101"
+}
+[assistant] Invoice 1 is paid. Invoice 2 passes every check too: Ferragens Silva is registered, the key matches, the category is materials, R$ 9.00 is under the cap, and the daily total would be R$ 21.00. Paying it now.
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 900, "idempotency_key": "NF-2102-ferragens-silva", "invoice_ref": "NF-2102", "memo": "Arame recozido, pedido 4410", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6FQGKN9TWJDHRQ3GJKT055C",
+  "status": "DONE",
+  "amount_cents": 900,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Arame recozido, pedido 4410"
+}
+[assistant] NF-2101 | concreto-forte | R$ 12.00 | paid | transfer sim_01M6FQGHZWDM96WR07B9Z0SDSD
+NF-2102 | ferragens-silva | R$ 9.00 | paid | transfer sim_01M6FQGKN9TWJDHRQ3GJKT055C
+
+Both invoices were paid in order. Today's total is R$ 21.00 of the R$ 80.00 daily cap.
+[result] subtype=success is_error=False turns=3 duration_ms=8965
+[final] NF-2101 | concreto-forte | R$ 12.00 | paid | transfer sim_01M6FQGHZWDM96WR07B9Z0SDSD
+NF-2102 | ferragens-silva | R$ 9.00 | paid | transfer sim_01M6FQGKN9TWJDHRQ3GJKT055C
+
+Both invoices were paid in order. Today's total is R$ 21.00 of the R$ 80.00 daily cap.

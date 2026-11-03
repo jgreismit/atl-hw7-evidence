@@ -1,0 +1,13 @@
+[
+  {
+    "amount_cents": 1200,
+    "created_at": "2026-11-03T03:27:45.132449+00:00",
+    "description": "BASELINE NF-2901",
+    "external_reference": "NF-2901-concreto-forte",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6FQ5MZC72DS015VSK596WYT"
+  }
+]

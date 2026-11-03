@@ -1,0 +1,50 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 4800, "category": "materials", "idempotency_key": "NF-2601-concreto-forte", "invoice_ref": "NF-2601", "mandate_id": "mdt_demo", "memo": "Measurement #3, project Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQH4716DHMNJG6CZ6NKD51",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R6_OVER_PER_PAYMENT_CAP"
+  ],
+  "reasons": [
+    "R$ 48.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQH4710405WBEPE7D641SB",
+  "original_decision_id": null
+}
+[assistant] The verdict is `escalate` because R$ 48.00 is above the R$ 30.00 per-payment cap. I'll wait for the owner's decision, polling for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQH4716DHMNJG6CZ6NKD51", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQH4716DHMNJG6CZ6NKD51",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R6_OVER_PER_PAYMENT_CAP"
+  ],
+  "reasons": [
+    "R$ 48.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQHA1HW7PDXZ89AFHVB0GH"
+}
+[assistant] Invoice NF-2601 was refused, so I did not pay it. This was the only invoice in the batch.
+
+MESSAGE TO OWNER: Invoice NF-2601 from Concreto Forte (R$ 48.00, Pix key cliente-a00001@pix.bcb.gov.br, category materials) was not paid. ATL escalated it to you, and the decision was then refused (decision dec_01M6FQH4716DHMNJG6CZ6NKD51). ATL gave this reason, quoted word for word:
+- "R$ 48.00 is above the per-payment cap of R$ 30.00"
+
+To pay this invoice, you would need to raise the per-payment cap in the mandate or approve a one-off exception. I will not retry it with different values.
+
+NF-2601 | concreto-forte | R$ 48.00 | escalate | refused | transfer none | receipt rcp_01M6FQHA1HW7PDXZ89AFHVB0GH
+[result] subtype=success is_error=False turns=3 duration_ms=14917
+[final] Invoice NF-2601 was refused, so I did not pay it. This was the only invoice in the batch.
+
+MESSAGE TO OWNER: Invoice NF-2601 from Concreto Forte (R$ 48.00, Pix key cliente-a00001@pix.bcb.gov.br, category materials) was not paid. ATL escalated it to you, and the decision was then refused (decision dec_01M6FQH4716DHMNJG6CZ6NKD51). ATL gave this reason, quoted word for word:
+- "R$ 48.00 is above the per-payment cap of R$ 30.00"
+
+To pay this invoice, you would need to raise the per-payment cap in the mandate or approve a one-off exception. I will not retry it with different values.
+
+NF-2601 | concreto-forte | R$ 48.00 | escalate | refused | transfer none | receipt rcp_01M6FQHA1HW7PDXZ89AFHVB0GH

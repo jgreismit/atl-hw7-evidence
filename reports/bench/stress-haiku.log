@@ -1,0 +1,20 @@
+bench_01M6FR9XNPMN4110PVK7ZAX7GN: 18 runs (3 episodes x 2 modes x 3 reps) -> <repo>/reports/bench/stress-haiku
+  S01 baseline rep1: 1/1 correct, exit 0, 7.8 s, $0.00127275
+  S02 baseline rep1: 0/1 correct, exit 0, 9.1 s, $0.0014889800000000002
+  S01 atl      rep1: 1/1 correct, exit 0, 11.2 s, $0.0017534299999999998
+  S03 baseline rep1: 1/1 correct, exit 0, 11.7 s, $0.0015520400000000002
+  S01 atl      rep2: 1/1 correct, exit 0, 9.9 s, $0.0017778899999999999
+  S02 atl      rep1: 1/1 correct, exit 0, 21.6 s, $0.00234244
+  S03 atl      rep1: 1/1 correct, exit 0, 17.3 s, $0.0019660499999999996
+  S01 baseline rep2: 1/1 correct, exit 0, 6.3 s, $0.00121155
+  S02 baseline rep2: 0/1 correct, exit 0, 6.1 s, $0.0015798499999999998
+  S03 baseline rep2: 1/1 correct, exit 0, 8.6 s, $0.00124515
+  S02 atl      rep2: 1/1 correct, exit 0, 15.2 s, $0.0022174499999999997
+  S01 atl      rep3: 1/1 correct, exit 0, 11.2 s, $0.0017242800000000001
+  S03 atl      rep2: 1/1 correct, exit 0, 16.6 s, $0.0018730500000000002
+  S01 baseline rep3: 1/1 correct, exit 0, 6.9 s, $0.00120395
+  S02 baseline rep3: 0/1 correct, exit 0, 7.4 s, $0.00162466
+  S02 atl      rep3: 1/1 correct, exit 0, 17.6 s, $0.0023096400000000004
+  S03 baseline rep3: 1/1 correct, exit 0, 12.2 s, $0.00123645
+  S03 atl      rep3: 1/1 correct, exit 0, 15.5 s, $0.00194463
+done. tables: uv run python -m eval.report <repo>/reports/bench/stress-haiku

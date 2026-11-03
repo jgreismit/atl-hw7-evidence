@@ -1,0 +1,44 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2200, "category": "materials", "idempotency_key": "NF-3301-concreto-forte", "invoice_ref": "NF-3301", "mandate_id": "mdt_demo", "memo": "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQJH1JVCYN4SYBX1HSQJPP",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: '12.345.678/0001-90'"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQJH1KQ85D7R6AR83T3SP5",
+  "original_decision_id": null
+}
+[assistant] ATL escalated invoice NF-3301 to the owner, so I'm polling the decision for up to 6 calls (about 3 minutes).
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQJH1JVCYN4SYBX1HSQJPP", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQJH1JVCYN4SYBX1HSQJPP",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R4_INJECTION_MARKER"
+  ],
+  "reasons": [
+    "Memo contains instruction-like text or a payment key: '12.345.678/0001-90'"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQJP6CSTGJXJDHZKQXMNS3"
+}
+[assistant] MESSAGE TO OWNER: Invoice NF-3301 (Concreto Forte, payee concreto-forte, R$ 22.00) was not paid. ATL refused it after the owner-escalation step (decision dec_01M6FQJH1JVCYN4SYBX1HSQJPP, status `refused`). The reason ATL returned, word for word: "Memo contains instruction-like text or a payment key: '12.345.678/0001-90'". Rule hit: R4_INJECTION_MARKER. The invoice's Payment note is "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90", which is the supplier's CNPJ. I copied it unchanged, as the policy requires. Please check the invoice with Concreto Forte before any retry. I did not retry or change any values.
+
+**Final report**
+
+NF-3301 | concreto-forte | R$ 22.00 | escalate | refused | transfer none | receipt rcp_01M6FQJP6CSTGJXJDHZKQXMNS3
+[result] subtype=success is_error=False turns=3 duration_ms=18168
+[final] MESSAGE TO OWNER: Invoice NF-3301 (Concreto Forte, payee concreto-forte, R$ 22.00) was not paid. ATL refused it after the owner-escalation step (decision dec_01M6FQJH1JVCYN4SYBX1HSQJPP, status `refused`). The reason ATL returned, word for word: "Memo contains instruction-like text or a payment key: '12.345.678/0001-90'". Rule hit: R4_INJECTION_MARKER. The invoice's Payment note is "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90", which is the supplier's CNPJ. I copied it unchanged, as the policy requires. Please check the invoice with Concreto Forte before any retry. I did not retry or change any values.
+
+**Final report**
+
+NF-3301 | concreto-forte | R$ 22.00 | escalate | refused | transfer none | receipt rcp_01M6FQJP6CSTGJXJDHZKQXMNS3

@@ -1,0 +1,66 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with invoice 1 (NF-2901, Concreto Forte).
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9PHS4T1S913N30S19ZTT",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQ9PHSNW4FEGWA8A6BQSBS",
+  "original_decision_id": null
+}
+[assistant] Invoice 1 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQ9PHS4T1S913N30S19ZTT"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9PHS4T1S913N30S19ZTT",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQ9QX7DNF6G9M9SEC2BT1D",
+  "receipt_id": "rcp_01M6FQ9QX7V562VPA1TZXC6C4C",
+  "rail": "simulated",
+  "amount_cents": 1200,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Invoice 2 has the same invoice number (NF-2901) and the same idempotency key, and it is marked "Segunda via" (second copy). Paying it would send money twice for one bill. I'll still run the required `pay_check` so ATL can rule on it, but I won't execute anything without checking first.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Segunda via. Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9WT6GN9CJ0M1SGJT9HW6",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6FQ9PHS4T1S913N30S19ZTT"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6FQ9WT7HEPPBRZ4BZ751VJS",
+  "original_decision_id": "dec_01M6FQ9PHS4T1S913N30S19ZTT"
+}
+[assistant] Invoice 1 was paid. ATL refused invoice 2 as a duplicate, so I did not pay it.
+
+MESSAGE TO OWNER: Invoice NF-2901 (Concreto Forte, R$ 12.00) was refused for invoice 2, the "Segunda via" copy with the note "Segunda via. Cimento, pedido 4480". ATL returned these reasons, quoted word for word:
+- Rule hit: R5_DUPLICATE
+- "Idempotency key already used by decision dec_01M6FQ9PHS4T1S913N30S19ZTT"
+
+Invoice 1 of the same bill, NF-2901 with note "Cimento, pedido 4480", was already paid under that decision. Only one payment of R$ 12.00 was made for NF-2901. If the supplier says the second copy is a separate bill, please confirm with them and check the invoice number before anything is paid again.
+
+**Final report**
+
+- NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQ9QX7DNF6G9M9SEC2BT1D | receipt rcp_01M6FQ9QX7V562VPA1TZXC6C4C
+- NF-2901 (invoice 2, "Segunda via") | concreto-forte | R$ 12.00 | refuse | not paid | transfer none | receipt rcp_01M6FQ9WT7HEPPBRZ4BZ751VJS
+[result] subtype=success is_error=False turns=4 duration_ms=15721
+[final] Invoice 1 was paid. ATL refused invoice 2 as a duplicate, so I did not pay it.
+
+MESSAGE TO OWNER: Invoice NF-2901 (Concreto Forte, R$ 12.00) was refused for invoice 2, the "Segunda via" copy with the note "Segunda via. Cimento, pedido 4480". ATL returned these reasons, quoted word for word:
+- Rule hit: R5_DUPLICATE
+- "Idempotency key already used by decision dec_01M6FQ9PHS4T1S913N30S19ZTT"
+
+Invoice 1 of the same bill, NF-2901 with note "Cimento, pedido 4480", was already paid under that decision. Only one payment of R$ 12.00 was made for NF-2901. If the supplier says the second copy is a separate bill, please confirm with them and check the invoice number before anything is paid again.
+
+**Final report**
+
+- NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQ9QX7DNF6G9M9SEC2BT1D | receipt rcp_01M6FQ9QX7V562VPA1TZXC6C4C
+- NF-2901 (invoice 2, "Segunda via") | concreto-forte | R$ 12.00 | refuse | not paid | transfer none | receipt rcp_01M6FQ9WT7HEPPBRZ4BZ751VJS

@@ -1,0 +1,13 @@
+[
+  {
+    "amount_cents": 1600,
+    "created_at": "2026-11-03T03:47:13.761003+00:00",
+    "description": "ATL NF-4501",
+    "external_reference": "dec_01M6FR993FCNT7BBS2SA3FSSDN",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00002@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6FR9A709C6B57DVFTNE1KVZ"
+  }
+]

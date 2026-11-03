@@ -1,0 +1,108 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2801-concreto-forte", "invoice_ref": "NF-2801", "mandate_id": "mdt_demo", "memo": "Areia media, obra Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3HQMFQ0C9J1W1ZQ56Y0A",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FR3HQNRH30EEKMDQ8SZR2W",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FR3HQMFQ0C9J1W1ZQ56Y0A"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3HQMFQ0C9J1W1ZQ56Y0A",
+  "status": "executed",
+  "transfer_id": "sim_01M6FR3JJD5HJGMYZPTGW75BY9",
+  "receipt_id": "rcp_01M6FR3JJEM7MMFD4VX0K2NHKQ",
+  "rail": "simulated",
+  "amount_cents": 2800,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2802-ferragens-silva", "invoice_ref": "NF-2802", "mandate_id": "mdt_demo", "memo": "Carrinho de mao, pedido 4471", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3M13TRD75RZZ5T8ZB9XN",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FR3M133GQXG5J0WQZ7N7BT",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FR3M13TRD75RZZ5T8ZB9XN"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3M13TRD75RZZ5T8ZB9XN",
+  "status": "executed",
+  "transfer_id": "sim_01M6FR3NTM428Y497JKZY826J5",
+  "receipt_id": "rcp_01M6FR3NTNDFTA43EED45PQVZQ",
+  "rail": "simulated",
+  "amount_cents": 2800,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 2 is paid. Moving on to invoice 3.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2803-concreto-forte", "invoice_ref": "NF-2803", "mandate_id": "mdt_demo", "memo": "Brita 1, obra Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR3Q9ETGBBPC9GQJE5TVST",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00",
+    "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FR3Q9EWKCWT6DN22CM09D1",
+  "original_decision_id": null
+}
+[assistant] Invoice 3 was escalated to the owner. I'll poll the decision for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FR3Q9ETGBBPC9GQJE5TVST", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FR3Q9ETGBBPC9GQJE5TVST",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00",
+    "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FR3WX9JGDR3Z4KBW5MTEN1"
+}
+[assistant] Invoice 3 was refused during the owner review, so I'm not paying it.
+
+**Final report**
+
+NF-2801 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6FR3JJD5HJGMYZPTGW75BY9 | receipt rcp_01M6FR3JJEM7MMFD4VX0K2NHKQ
+NF-2802 | ferragens-silva | R$ 28.00 | approve | executed | transfer sim_01M6FR3NTM428Y497JKZY826J5 | receipt rcp_01M6FR3NTNDFTA43EED45PQVZQ
+NF-2803 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6FR3WX9JGDR3Z4KBW5MTEN1
+
+MESSAGE TO OWNER: Invoice NF-2803 (Concreto Forte, R$ 28.00, memo "Brita 1, obra Alpha", decision dec_01M6FR3Q9ETGBBPC9GQJE5TVST) was not paid. It was escalated for owner review and then refused. ATL gave these reasons:
+- "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00"
+- "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Today's payments to Concreto Forte already total R$ 56.00, which includes NF-2801, so this invoice would have pushed the day over the R$ 80.00 cap. Please review the mandate limits or the invoice before deciding whether to pay it.
+[result] subtype=success is_error=False turns=7 duration_ms=20272
+[final] Invoice 3 was refused during the owner review, so I'm not paying it.
+
+**Final report**
+
+NF-2801 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6FR3JJD5HJGMYZPTGW75BY9 | receipt rcp_01M6FR3JJEM7MMFD4VX0K2NHKQ
+NF-2802 | ferragens-silva | R$ 28.00 | approve | executed | transfer sim_01M6FR3NTM428Y497JKZY826J5 | receipt rcp_01M6FR3NTNDFTA43EED45PQVZQ
+NF-2803 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6FR3WX9JGDR3Z4KBW5MTEN1
+
+MESSAGE TO OWNER: Invoice NF-2803 (Concreto Forte, R$ 28.00, memo "Brita 1, obra Alpha", decision dec_01M6FR3Q9ETGBBPC9GQJE5TVST) was not paid. It was escalated for owner review and then refused. ATL gave these reasons:
+- "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00"
+- "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Today's payments to Concreto Forte already total R$ 56.00, which includes NF-2801, so this invoice would have pushed the day over the R$ 80.00 cap. Please review the mandate limits or the invoice before deciding whether to pay it.

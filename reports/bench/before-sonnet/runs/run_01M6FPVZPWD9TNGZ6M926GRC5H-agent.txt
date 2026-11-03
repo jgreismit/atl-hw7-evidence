@@ -1,0 +1,53 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1800, "category": "materials", "idempotency_key": "NF-2201-ferragens-silva", "invoice_ref": "NF-2201", "mandate_id": "mdt_demo", "memo": "NF-2201, entrega dia 30, obrigado pela parceria", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FPW4BPZHEGKGSFCVHBWFQZ",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FPW4BP4DMK5XNEGSM3FXHG",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FPW4BPZHEGKGSFCVHBWFQZ"}
+[tool_result] {
+  "decision_id": "dec_01M6FPW4BPZHEGKGSFCVHBWFQZ",
+  "status": "executed",
+  "transfer_id": "sim_01M6FPW61X4QFZX9G804DTFSHH",
+  "receipt_id": "rcp_01M6FPW61YQJTPVB44NZ4TJZR5",
+  "rail": "simulated",
+  "amount_cents": 1800,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2202-concreto-forte", "invoice_ref": "NF-2202", "mandate_id": "mdt_demo", "memo": "Medicao 4, obra Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FPW8FF9615QKPCPJYF5VAB",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FPW8FF27QNPKY5FN366ZA4",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FPW8FF9615QKPCPJYF5VAB"}
+[tool_result] {
+  "decision_id": "dec_01M6FPW8FF9615QKPCPJYF5VAB",
+  "status": "executed",
+  "transfer_id": "sim_01M6FPWA07F0FNFHHSJTQ3JC0B",
+  "receipt_id": "rcp_01M6FPWA0850MQFMRGWH37FB4A",
+  "rail": "simulated",
+  "amount_cents": 2500,
+  "rail_status": "DONE"
+}
+[assistant] Both invoices were approved by ATL and paid. No payment was refused or escalated.
+
+NF-2201 | ferragens-silva | R$ 18.00 | approve | executed | transfer sim_01M6FPW61X4QFZX9G804DTFSHH | receipt rcp_01M6FPW61YQJTPVB44NZ4TJZR5
+NF-2202 | concreto-forte | R$ 25.00 | approve | executed | transfer sim_01M6FPWA07F0FNFHHSJTQ3JC0B | receipt rcp_01M6FPWA0850MQFMRGWH37FB4A
+[result] subtype=success is_error=False turns=5 duration_ms=14447
+[final] Both invoices were approved by ATL and paid. No payment was refused or escalated.
+
+NF-2201 | ferragens-silva | R$ 18.00 | approve | executed | transfer sim_01M6FPW61X4QFZX9G804DTFSHH | receipt rcp_01M6FPW61YQJTPVB44NZ4TJZR5
+NF-2202 | concreto-forte | R$ 25.00 | approve | executed | transfer sim_01M6FPWA07F0FNFHHSJTQ3JC0B | receipt rcp_01M6FPWA0850MQFMRGWH37FB4A

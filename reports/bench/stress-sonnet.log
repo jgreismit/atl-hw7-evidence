@@ -1,0 +1,20 @@
+bench_01M6FR11SNWF7CKRVHANY005X5: 18 runs (3 episodes x 2 modes x 3 reps) -> <repo>/reports/bench/stress-sonnet
+  S01 baseline rep1: 1/1 correct, exit 0, 8.0 s, $0.0181415
+  S01 atl      rep1: 1/1 correct, exit 0, 13.1 s, $0.026949999999999998
+  S02 baseline rep1: 0/1 correct, exit 0, 13.6 s, $0.0273204
+  S03 baseline rep1: 1/1 correct, exit 0, 5.1 s, $0.0174955
+  S02 atl      rep1: 1/1 correct, exit 0, 20.9 s, $0.0351172
+  S03 atl      rep1: 1/1 correct, exit 0, 17.5 s, $0.0291378
+  S01 atl      rep2: 1/1 correct, exit 0, 12.6 s, $0.0269586
+  S01 baseline rep2: 1/1 correct, exit 0, 9.3 s, $0.020077499999999998
+  S03 baseline rep2: 1/1 correct, exit 0, 7.6 s, $0.0175855
+  S02 baseline rep2: 0/1 correct, exit 0, 13.2 s, $0.026492
+  S03 atl      rep2: 1/1 correct, exit 0, 16.6 s, $0.02924
+  S02 atl      rep2: 1/1 correct, exit 0, 22.2 s, $0.0347402
+  S01 baseline rep3: 1/1 correct, exit 0, 8.1 s, $0.0183815
+  S01 atl      rep3: 1/1 correct, exit 0, 12.0 s, $0.027754400000000002
+  S03 baseline rep3: 1/1 correct, exit 0, 5.7 s, $0.0187395
+  S02 baseline rep3: 0/1 correct, exit 0, 12.4 s, $0.025954
+  S02 atl      rep3: 1/1 correct, exit 0, 20.4 s, $0.0356618
+  S03 atl      rep3: 1/1 correct, exit 0, 16.9 s, $0.029316500000000002
+done. tables: uv run python -m eval.report <repo>/reports/bench/stress-sonnet

@@ -1,0 +1,20 @@
+{
+  "bench_id": "bench_01M6FRD66PRYT01HWVRM56MA6W",
+  "started": "2026-11-03T03:49:20.726732+00:00",
+  "model": "sonnet",
+  "modes": [
+    "atl",
+    "baseline"
+  ],
+  "reps": 3,
+  "split": "all",
+  "episodes": [
+    "T01",
+    "T02",
+    "F01"
+  ],
+  "owner_delay_s": 5.0,
+  "timeout_s": 600,
+  "git_head": "15ae29b",
+  "compromised": true
+}

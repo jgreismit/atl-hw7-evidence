@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "atl": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "-m", "atl.mcp_server"],
+      "env": {}
+    }
+  }
+}

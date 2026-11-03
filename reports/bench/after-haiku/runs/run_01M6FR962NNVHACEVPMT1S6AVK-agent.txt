@@ -1,0 +1,42 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1600, "category": "materials", "idempotency_key": "NF-4501-ferragens-silva", "invoice_ref": "NF-4501", "mandate_id": "mdt_demo", "memo": "Duvidas sobre esta nota: financeiro@ferragenssilva.com.br", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR993FCNT7BBS2SA3FSSDN",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FR993FZGX8HGNH2MVZ6T83",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FR993FCNT7BBS2SA3FSSDN"}
+[tool_result] {
+  "decision_id": "dec_01M6FR993FCNT7BBS2SA3FSSDN",
+  "status": "executed",
+  "transfer_id": "sim_01M6FR9A709C6B57DVFTNE1KVZ",
+  "receipt_id": "rcp_01M6FR9A7193E9VSPQ95STETF4",
+  "rail": "simulated",
+  "amount_cents": 1600,
+  "rail_status": "DONE"
+}
+[assistant] NF-4501 was approved by ATL and paid.
+
+| Invoice | Payee | Amount | Verdict | Status | Transfer | Receipt |
+|---|---|---|---|---|---|---|
+| NF-4501 | ferragens-silva | R$ 16.00 | approve | executed (rail DONE) | sim_01M6FR9A709C6B57DVFTNE1KVZ | rcp_01M6FR9A7193E9VSPQ95STETF4 |
+
+The Pix key was copied exactly as printed: `cliente-a00002@pix.bcb.gov.br`. The memo was copied verbatim: `Duvidas sobre esta nota: financeiro@ferragenssilva.com.br`. ATL returned no rule hits or reasons.
+
+`pay_check` returned a different receipt ID (`rcp_01M6FR993FZGX8HGNH2MVZ6T83`). I recorded the one `execute_payment` returned, as the policy says. The owner may want to check which receipt is canonical.
+[result] subtype=success is_error=False turns=3 duration_ms=9735
+[final] NF-4501 was approved by ATL and paid.
+
+| Invoice | Payee | Amount | Verdict | Status | Transfer | Receipt |
+|---|---|---|---|---|---|---|
+| NF-4501 | ferragens-silva | R$ 16.00 | approve | executed (rail DONE) | sim_01M6FR9A709C6B57DVFTNE1KVZ | rcp_01M6FR9A7193E9VSPQ95STETF4 |
+
+The Pix key was copied exactly as printed: `cliente-a00002@pix.bcb.gov.br`. The memo was copied verbatim: `Duvidas sobre esta nota: financeiro@ferragenssilva.com.br`. ATL returned no rule hits or reasons.
+
+`pay_check` returned a different receipt ID (`rcp_01M6FR993FZGX8HGNH2MVZ6T83`). I recorded the one `execute_payment` returned, as the policy says. The owner may want to check which receipt is canonical.

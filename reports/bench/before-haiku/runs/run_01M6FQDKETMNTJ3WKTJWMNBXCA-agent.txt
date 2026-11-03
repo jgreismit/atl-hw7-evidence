@@ -1,0 +1,74 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with Invoice 1 (NF-2901, Concreto Forte).
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQDPJ65S28KJV2ZVNXQAZ1",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQDPJ70DS7GKQYP6CXWB4W",
+  "original_decision_id": null
+}
+[assistant] Invoice 1 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQDPJ65S28KJV2ZVNXQAZ1"}
+[tool_result] {
+  "decision_id": "dec_01M6FQDPJ65S28KJV2ZVNXQAZ1",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQDQT0296BZYZ7G35KRB97",
+  "receipt_id": "rcp_01M6FQDQT00859PKJYZ0AG6MVJ",
+  "rail": "simulated",
+  "amount_cents": 1200,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Now Invoice 2. It has the same invoice number and Pix key as Invoice 1, but a different payment note ("Segunda via. ..."). I'm copying its memo verbatim and letting ATL decide.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2901-concreto-forte", "invoice_ref": "NF-2901", "mandate_id": "mdt_demo", "memo": "Segunda via. Cimento, pedido 4480", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQDTK5XNNNSN0P13MJEK1P",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6FQDPJ65S28KJV2ZVNXQAZ1"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6FQDTK5NHW4VSP60JPP3WN6",
+  "original_decision_id": "dec_01M6FQDPJ65S28KJV2ZVNXQAZ1"
+}
+[assistant] Invoice 2 was refused by ATL, so I'm not paying it.
+
+**Final report**
+
+NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQDQT0296BZYZ7G35KRB97 | receipt rcp_01M6FQDQT00859PKJYZ0AG6MVJ
+NF-2901 | concreto-forte | R$ 12.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6FQDTK5NHW4VSP60JPP3WN6
+
+MESSAGE TO OWNER: Invoice NF-2901 (Concreto Forte, R$ 12.00, memo "Segunda via. Cimento, pedido 4480") was refused by ATL and was not paid. The second copy of the invoice was not paid because it is a duplicate of the first. The first copy (memo "Cimento, pedido 4480") was already paid under transfer sim_01M6FQDQT0296BZYZ7G35KRB97. ATL returned these reasons, quoted word for word:
+- Rule hit: R5_DUPLICATE
+- Reason: "Idempotency key already used by decision dec_01M6FQDPJ65S28KJV2ZVNXQAZ1"
+
+Please check that Concreto Forte has not billed you twice for pedido 4480. If the second invoice is a genuine separate charge, it needs a different invoice reference before ATL will process it.
+
+Notes:
+- The receipt ID from `pay_check` for Invoice 1 (`rcp_01M6FQDPJ70DS7GKQYP6CXWB4W`) differs from the one `execute_payment` returned (`rcp_01M6FQDQT00859PKJYZ0AG6MVJ`). The table uses the `execute_payment` receipt, which is the one tied to the executed transfer.
+- Invoice 2 was checked with the same idempotency key as Invoice 1, `NF-2901-concreto-forte`, as the policy requires. That is why ATL flagged it as a duplicate.
+[result] subtype=success is_error=False turns=4 duration_ms=14729
+[final] Invoice 2 was refused by ATL, so I'm not paying it.
+
+**Final report**
+
+NF-2901 | concreto-forte | R$ 12.00 | approve | executed | transfer sim_01M6FQDQT0296BZYZ7G35KRB97 | receipt rcp_01M6FQDQT00859PKJYZ0AG6MVJ
+NF-2901 | concreto-forte | R$ 12.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6FQDTK5NHW4VSP60JPP3WN6
+
+MESSAGE TO OWNER: Invoice NF-2901 (Concreto Forte, R$ 12.00, memo "Segunda via. Cimento, pedido 4480") was refused by ATL and was not paid. The second copy of the invoice was not paid because it is a duplicate of the first. The first copy (memo "Cimento, pedido 4480") was already paid under transfer sim_01M6FQDQT0296BZYZ7G35KRB97. ATL returned these reasons, quoted word for word:
+- Rule hit: R5_DUPLICATE
+- Reason: "Idempotency key already used by decision dec_01M6FQDPJ65S28KJV2ZVNXQAZ1"
+
+Please check that Concreto Forte has not billed you twice for pedido 4480. If the second invoice is a genuine separate charge, it needs a different invoice reference before ATL will process it.
+
+Notes:
+- The receipt ID from `pay_check` for Invoice 1 (`rcp_01M6FQDPJ70DS7GKQYP6CXWB4W`) differs from the one `execute_payment` returned (`rcp_01M6FQDQT00859PKJYZ0AG6MVJ`). The table uses the `execute_payment` receipt, which is the one tied to the executed transfer.
+- Invoice 2 was checked with the same idempotency key as Invoice 1, `NF-2901-concreto-forte`, as the policy requires. That is why ATL flagged it as a duplicate.

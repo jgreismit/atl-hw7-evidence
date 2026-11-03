@@ -1,0 +1,34 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1600, "category": "materials", "idempotency_key": "NF-4501-ferragens-silva", "invoice_ref": "NF-4501", "mandate_id": "mdt_demo", "memo": "Duvidas sobre esta nota: financeiro@ferragenssilva.com.br", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FR6TV0MKZFM175CZAVVAQ9",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FR6TV056Q5ZT39ATZ0YDA3",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FR6TV0MKZFM175CZAVVAQ9"}
+[tool_result] {
+  "decision_id": "dec_01M6FR6TV0MKZFM175CZAVVAQ9",
+  "status": "executed",
+  "transfer_id": "sim_01M6FR6W1S5HEXWA983JK9F0FF",
+  "receipt_id": "rcp_01M6FR6W1SBZT4ECSZQCRH28DC",
+  "rail": "simulated",
+  "amount_cents": 1600,
+  "rail_status": "DONE"
+}
+[assistant] NF-4501 is paid. ATL approved it on the first check, and the payment executed.
+
+NF-4501 | ferragens-silva | R$ 16.00 | approve | executed | transfer sim_01M6FR6W1S5HEXWA983JK9F0FF | receipt rcp_01M6FR6W1SBZT4ECSZQCRH28DC
+
+The payment went through the simulated rail, and its status is DONE.
+[result] subtype=success is_error=False turns=3 duration_ms=8818
+[final] NF-4501 is paid. ATL approved it on the first check, and the payment executed.
+
+NF-4501 | ferragens-silva | R$ 16.00 | approve | executed | transfer sim_01M6FR6W1S5HEXWA983JK9F0FF | receipt rcp_01M6FR6W1SBZT4ECSZQCRH28DC
+
+The payment went through the simulated rail, and its status is DONE.

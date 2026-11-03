@@ -1,0 +1,24 @@
+[
+  {
+    "amount_cents": 700,
+    "created_at": "2026-11-03T03:49:47.296844+00:00",
+    "description": "BASELINE NF-4101",
+    "external_reference": "NF-4101-ferragens-silva",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00002@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6FRE050RT1M58JJTNAQ1F9W"
+  },
+  {
+    "amount_cents": 1900,
+    "created_at": "2026-11-03T03:49:49.114529+00:00",
+    "description": "BASELINE NF-4102",
+    "external_reference": "NF-4102-concreto-forte",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6FRE1XT5ZH90WHAARA4WTGM"
+  }
+]

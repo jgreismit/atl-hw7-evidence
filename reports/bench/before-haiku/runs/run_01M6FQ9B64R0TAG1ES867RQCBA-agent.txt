@@ -1,0 +1,112 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2801-concreto-forte", "invoice_ref": "NF-2801", "mandate_id": "mdt_demo", "memo": "Areia media, obra Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9FCH9WQT7711A13EATKK",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQ9FCJSYD8APKYMYX90EBQ",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQ9FCH9WQT7711A13EATKK"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9FCH9WQT7711A13EATKK",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQ9JCYSBQF38S7ZH9B619S",
+  "receipt_id": "rcp_01M6FQ9JCZXCC1NXFR7N2QNEG4",
+  "rail": "simulated",
+  "amount_cents": 2800,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2802-ferragens-silva", "invoice_ref": "NF-2802", "mandate_id": "mdt_demo", "memo": "Carrinho de mao, pedido 4471", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9MZSX016C6J91Z3ZGKBZ",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6FQ9MZSVAX6ZF3H6CDYGJR7",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6FQ9MZSX016C6J91Z3ZGKBZ"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9MZSX016C6J91Z3ZGKBZ",
+  "status": "executed",
+  "transfer_id": "sim_01M6FQ9PDKBFSDWY1181XP02A5",
+  "receipt_id": "rcp_01M6FQ9PDM1WQCR5BQ7KBH99D7",
+  "rail": "simulated",
+  "amount_cents": 2800,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 2 is paid. Now invoice 3.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-2803-concreto-forte", "invoice_ref": "NF-2803", "mandate_id": "mdt_demo", "memo": "Brita 1, obra Alpha", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9R3TC9BDMSPEDWJCNKHF",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00",
+    "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6FQ9R3TTQRH6HAW7F8K4CTE",
+  "original_decision_id": null
+}
+[assistant] Invoice 3 was escalated to the owner. I'll poll the decision for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6FQ9R3TC9BDMSPEDWJCNKHF", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6FQ9R3TC9BDMSPEDWJCNKHF",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00",
+    "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6FQ9XT5PDSB21RP7YXZAMCV"
+}
+[assistant] Invoice 3 was refused by the owner-side review, so I'm not paying it and not calling `execute_payment`.
+
+**Final report**
+
+NF-2801 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6FQ9JCYSBQF38S7ZH9B619S | receipt rcp_01M6FQ9JCZXCC1NXFR7N2QNEG4
+NF-2802 | ferragens-silva | R$ 28.00 | approve | executed | transfer sim_01M6FQ9PDKBFSDWY1181XP02A5 | receipt rcp_01M6FQ9PDM1WQCR5BQ7KBH99D7
+NF-2803 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9XT5PDSB21RP7YXZAMCV
+
+MESSAGE TO OWNER: Invoice NF-2803 (Concreto Forte, R$ 28.00, memo "Brita 1, obra Alpha") was not paid. ATL escalated it, and the owner review returned status "refused". ATL gave these reasons, word for word:
+- "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00"
+- "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Please review NF-2803 if you still want it paid. I did not retry it.
+
+Note on the two paid invoices: both NF-2801 and NF-2802 were R$ 28.00 and the rail reported them as executed. The Concreto Forte payments (NF-2801 today, plus the earlier R$ 28.00 that ATL counted) triggered the split-pattern check on NF-2803.
+[result] subtype=success is_error=False turns=7 duration_ms=30312
+[final] Invoice 3 was refused by the owner-side review, so I'm not paying it and not calling `execute_payment`.
+
+**Final report**
+
+NF-2801 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6FQ9JCYSBQF38S7ZH9B619S | receipt rcp_01M6FQ9JCZXCC1NXFR7N2QNEG4
+NF-2802 | ferragens-silva | R$ 28.00 | approve | executed | transfer sim_01M6FQ9PDKBFSDWY1181XP02A5 | receipt rcp_01M6FQ9PDM1WQCR5BQ7KBH99D7
+NF-2803 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6FQ9XT5PDSB21RP7YXZAMCV
+
+MESSAGE TO OWNER: Invoice NF-2803 (Concreto Forte, R$ 28.00, memo "Brita 1, obra Alpha") was not paid. ATL escalated it, and the owner review returned status "refused". ATL gave these reasons, word for word:
+- "Today's total R$ 56.00 plus R$ 28.00 is above the daily cap of R$ 80.00"
+- "R$ 28.00 already sent to concreto-forte in 24 h plus R$ 28.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Please review NF-2803 if you still want it paid. I did not retry it.
+
+Note on the two paid invoices: both NF-2801 and NF-2802 were R$ 28.00 and the rail reported them as executed. The Concreto Forte payments (NF-2801 today, plus the earlier R$ 28.00 that ATL counted) triggered the split-pattern check on NF-2803.
