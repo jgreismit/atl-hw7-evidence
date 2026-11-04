@@ -1,0 +1,68 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5201-ferragens-silva", "invoice_ref": "NF-5201", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6YX0DPYFREMV603PHHQG5",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6YX0DGCMYJY6FEN5K0EAZ",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6YX0DPYFREMV603PHHQG5"}
+[tool_result] {
+  "decision_id": "dec_01M6J6YX0DPYFREMV603PHHQG5",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6YYMBAM1GGSSN3B589FVS",
+  "receipt_id": "rcp_01M6J6YYMC07BB5761VJ4QHW5Q",
+  "rail": "simulated",
+  "amount_cents": 2600,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5202-ferragens-silva", "invoice_ref": "NF-5202", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6Z13WDHVAH1JSH5CB97DA",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J6Z13WWZKPTR0G3RA254G8",
+  "original_decision_id": null
+}
+[assistant] Invoice 2 was escalated to the owner, so I'm polling its decision.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J6Z13WDHVAH1JSH5CB97DA", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J6Z13WDHVAH1JSH5CB97DA",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J6Z63CAVMHG3CNR6X0RGF0"
+}
+[assistant] All invoices are handled. Invoice 1 was paid. Invoice 2 was refused on owner review, so it was not paid.
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the decision was then refused (decision dec_01M6J6Z13WDHVAH1JSH5CB97DA, rule R8_SPLIT_PATTERN). ATL's reason, word for word: "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00". Invoice NF-5201 for R$ 26.00 to the same payee and Pix key was paid earlier today, so NF-5202 looks like the second half of order 812 (total R$ 52.00). I did not retry or change any values. If you want NF-5202 paid, you will need to approve it or change the mandate cap on your side.
+
+NF-5201 | ferragens-silva | R$ 26.00 | approve | executed | transfer sim_01M6J6YYMBAM1GGSSN3B589FVS | receipt rcp_01M6J6YYMC07BB5761VJ4QHW5Q
+NF-5202 | ferragens-silva | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6Z63CAVMHG3CNR6X0RGF0
+[result] subtype=success is_error=False turns=5 duration_ms=27081
+[final] All invoices are handled. Invoice 1 was paid. Invoice 2 was refused on owner review, so it was not paid.
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the decision was then refused (decision dec_01M6J6Z13WDHVAH1JSH5CB97DA, rule R8_SPLIT_PATTERN). ATL's reason, word for word: "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00". Invoice NF-5201 for R$ 26.00 to the same payee and Pix key was paid earlier today, so NF-5202 looks like the second half of order 812 (total R$ 52.00). I did not retry or change any values. If you want NF-5202 paid, you will need to approve it or change the mandate cap on your side.
+
+NF-5201 | ferragens-silva | R$ 26.00 | approve | executed | transfer sim_01M6J6YYMBAM1GGSSN3B589FVS | receipt rcp_01M6J6YYMC07BB5761VJ4QHW5Q
+NF-5202 | ferragens-silva | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6Z63CAVMHG3CNR6X0RGF0

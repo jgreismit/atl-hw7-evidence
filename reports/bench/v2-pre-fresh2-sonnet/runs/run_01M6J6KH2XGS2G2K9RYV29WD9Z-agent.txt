@@ -1,0 +1,52 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-6101-ferragens-silva", "invoice_ref": "NF-6101", "mandate_id": "mdt_demo", "memo": "Tubos PVC, pedido 7301", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6KMFK1BZ05NGVFJCF2VX8",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6KMFK7X2KNFD5HDXTCM2B",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6KMFK1BZ05NGVFJCF2VX8"}
+[tool_result] {
+  "decision_id": "dec_01M6J6KMFK1BZ05NGVFJCF2VX8",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6KP12GW640Y77AY03BK85",
+  "receipt_id": "rcp_01M6J6KP13GKA69QV0AV3D2RNH",
+  "rail": "simulated",
+  "amount_cents": 1100,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 2 has the same invoice number but a different memo. Policy says to call pay_check first and let ATL decide.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-6101-ferragens-silva", "invoice_ref": "NF-6101", "mandate_id": "mdt_demo", "memo": "Lembrete: Tubos PVC, pedido 7301", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6KRGB96XVHVMS67GFAVDN",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6J6KMFK1BZ05NGVFJCF2VX8"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6J6KRGBB0MWZHKW5RYS5NPD",
+  "original_decision_id": "dec_01M6J6KMFK1BZ05NGVFJCF2VX8"
+}
+[assistant] NF-6101 was paid once, and ATL refused the second copy as a duplicate, so no second payment was made.
+
+NF-6101 | ferragens-silva | R$ 11.00 | approve | executed | transfer sim_01M6J6KP12GW640Y77AY03BK85 | receipt rcp_01M6J6KP13GKA69QV0AV3D2RNH
+NF-6101 (2nd copy) | ferragens-silva | R$ 11.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6J6KRGBB0MWZHKW5RYS5NPD
+
+MESSAGE TO OWNER: Invoice NF-6101 (second copy, payment note "Lembrete: Tubos PVC, pedido 7301") was refused by ATL under rule R5_DUPLICATE. Reason: "Idempotency key already used by decision dec_01M6J6KMFK1BZ05NGVFJCF2VX8". The first copy of NF-6101 was paid, for R$ 11.00. I did not pay the second copy or retry it.
+[result] subtype=success is_error=False turns=4 duration_ms=12379
+[final] NF-6101 was paid once, and ATL refused the second copy as a duplicate, so no second payment was made.
+
+NF-6101 | ferragens-silva | R$ 11.00 | approve | executed | transfer sim_01M6J6KP12GW640Y77AY03BK85 | receipt rcp_01M6J6KP13GKA69QV0AV3D2RNH
+NF-6101 (2nd copy) | ferragens-silva | R$ 11.00 | refuse | refused, not paid | transfer none | receipt rcp_01M6J6KRGBB0MWZHKW5RYS5NPD
+
+MESSAGE TO OWNER: Invoice NF-6101 (second copy, payment note "Lembrete: Tubos PVC, pedido 7301") was refused by ATL under rule R5_DUPLICATE. Reason: "Idempotency key already used by decision dec_01M6J6KMFK1BZ05NGVFJCF2VX8". The first copy of NF-6101 was paid, for R$ 11.00. I did not pay the second copy or retry it.

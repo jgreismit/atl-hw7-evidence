@@ -1,0 +1,13 @@
+[
+  {
+    "amount_cents": 1000,
+    "created_at": "2026-11-04T02:35:44.686036+00:00",
+    "description": "BASELINE NF-5901",
+    "external_reference": "NF-5901-ferragens-silva",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00002@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J6K4NERKGPTA3CM71950H9"
+  }
+]

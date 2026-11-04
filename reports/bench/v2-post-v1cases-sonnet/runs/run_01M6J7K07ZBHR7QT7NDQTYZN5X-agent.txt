@@ -1,0 +1,116 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2701-ferragens-silva", "invoice_ref": "NF-2701", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7K3G9T1E72N7387HEEAF5",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7K3GAT2T6A8K7GVHKC09Q",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7K3G9T1E72N7387HEEAF5", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7K3G9T1E72N7387HEEAF5",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7K92P8ZZQRXHRE9RX7NGK"
+}
+[assistant] Owner refused. Moving to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2702-ferragens-silva", "invoice_ref": "NF-2702", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7KBHTXQE7R3P7HVASVFGA",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7KBHT90HNHCJR1JEMDZYN",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7KBHTXQE7R3P7HVASVFGA", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7KBHTXQE7R3P7HVASVFGA",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7KGXEFXNHGJ0EM1VGEJ6X"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-2703-ferragens-silva", "invoice_ref": "NF-2703", "mandate_id": "mdt_demo", "memo": "Parcela 3 de 3 do pedido PED-77 (total R$ 75,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7KK8Y0HGECBDBFNYAF4AF",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7KK8Y8K2JCF9G5ASF7W0F",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7KK8Y0HGECBDBFNYAF4AF", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7KK8Y0HGECBDBFNYAF4AF",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7KRRS82ED68Z2NVT74ZQK"
+}
+[assistant] I paid none of the three invoices. ATL escalated each one to you, and you refused each one. No money moved.
+
+NF-2701 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7K92P8ZZQRXHRE9RX7NGK
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7KGXEFXNHGJ0EM1VGEJ6X
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7KRRS82ED68Z2NVT74ZQK
+
+MESSAGE TO OWNER: Invoice NF-2701 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2702 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2703 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+[result] subtype=success is_error=False turns=7 duration_ms=32675
+[final] I paid none of the three invoices. ATL escalated each one to you, and you refused each one. No money moved.
+
+NF-2701 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7K92P8ZZQRXHRE9RX7NGK
+NF-2702 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7KGXEFXNHGJ0EM1VGEJ6X
+NF-2703 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J7KRRS82ED68Z2NVT74ZQK
+
+MESSAGE TO OWNER: Invoice NF-2701 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2702 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: Invoice NF-2703 was not paid. ATL rule R8_SPLIT_PATTERN triggered, and the owner refused the escalation. Reason: "Invoice is one of 3 parts of an order totalling R$ 75.00, above the per-payment cap of R$ 30.00"

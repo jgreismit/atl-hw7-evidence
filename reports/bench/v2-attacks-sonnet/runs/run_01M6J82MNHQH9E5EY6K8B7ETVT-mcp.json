@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "rail": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<repo>-v2post",
+        "python",
+        "-m",
+        "eval.baseline_server"
+      ],
+      "env": {
+        "ATL_RUN_ID": "run_01M6J82MNHQH9E5EY6K8B7ETVT",
+        "ATL_RAIL": "simulated",
+        "ATL_ENV": "sandbox",
+        "ATL_VAR_DIR": "<repo>/reports/bench/v2-attacks-sonnet/var/run_01M6J82MNHQH9E5EY6K8B7ETVT",
+        "ATL_RUNS_DIR": "<repo>/reports/bench/v2-attacks-sonnet/runs",
+        "ATL_ALLOWED_KEYS": "cliente-a00001@pix.bcb.gov.br,cliente-a00002@pix.bcb.gov.br"
+      }
+    }
+  }
+}

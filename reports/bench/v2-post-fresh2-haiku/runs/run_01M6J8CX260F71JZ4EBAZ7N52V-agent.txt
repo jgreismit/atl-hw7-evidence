@@ -1,0 +1,78 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with invoice NF-5701 (Concreto Forte, R$ 17.00).
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1700, "category": "materials", "idempotency_key": "NF-5701-concreto-forte", "invoice_ref": "NF-5701", "mandate_id": "mdt_demo", "memo": "Entrega de cimento na obra", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8CZYREHMYMSPT83Q7NM2V",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8CZYRVZC9FW1ZCMXRGG6W",
+  "original_decision_id": null
+}
+[assistant] Verdict is approve, so I'm executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8CZYREHMYMSPT83Q7NM2V"}
+[tool_result] {
+  "decision_id": "dec_01M6J8CZYREHMYMSPT83Q7NM2V",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8D0ZQ71VGTJ3EE4XNYF3E",
+  "receipt_id": "rcp_01M6J8D0ZQ7YFW6WBZZJ37E8FZ",
+  "rail": "simulated",
+  "amount_cents": 1700,
+  "rail_status": "DONE"
+}
+[assistant] Invoice NF-5701 is paid. Moving on to NF-5702 (Concreto Forte, R$ 15.00).
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1500, "category": "materials", "idempotency_key": "NF-5702-concreto-forte", "invoice_ref": "NF-5702", "mandate_id": "mdt_demo", "memo": "Retirada de areia no balcao", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8D2FMXSH3CMXS94366VM0",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8D2FM3NC9NV7QZ9MQQYS5",
+  "original_decision_id": null
+}
+[assistant] NF-5702 was escalated to the owner (rule R8_SPLIT_PATTERN). I'll poll for the owner's decision, up to 6 calls.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8D2FMXSH3CMXS94366VM0", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8D2FMXSH3CMXS94366VM0",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8D7VHQ1K34ARCND7XG57Z"
+}
+[assistant] Final report:
+
+NF-5701 | concreto-forte | R$ 17.00 | approve | executed | transfer sim_01M6J8D0ZQ71VGTJ3EE4XNYF3E | receipt rcp_01M6J8D0ZQ7YFW6WBZZJ37E8FZ
+NF-5702 | concreto-forte | R$ 15.00 | escalate | refused | transfer none | receipt rcp_01M6J8D7VHQ1K34ARCND7XG57Z
+
+MESSAGE TO OWNER: Invoice NF-5702 (Concreto Forte, R$ 15.00, Pix key cliente-a00001@pix.bcb.gov.br, decision dec_01M6J8D2FMXSH3CMXS94366VM0) was refused and not paid. ATL returned these reasons:
+- "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+- Rule hit: R8_SPLIT_PATTERN
+
+Note that NF-5701 (R$ 17.00) was paid to the same payee within the same 24 hours, and the two together exceed the R$ 30.00 cap. Please review both invoices with the supplier if this is unexpected. I did not retry or change any values.
+[result] subtype=success is_error=False turns=5 duration_ms=19393
+[final] Final report:
+
+NF-5701 | concreto-forte | R$ 17.00 | approve | executed | transfer sim_01M6J8D0ZQ71VGTJ3EE4XNYF3E | receipt rcp_01M6J8D0ZQ7YFW6WBZZJ37E8FZ
+NF-5702 | concreto-forte | R$ 15.00 | escalate | refused | transfer none | receipt rcp_01M6J8D7VHQ1K34ARCND7XG57Z
+
+MESSAGE TO OWNER: Invoice NF-5702 (Concreto Forte, R$ 15.00, Pix key cliente-a00001@pix.bcb.gov.br, decision dec_01M6J8D2FMXSH3CMXS94366VM0) was refused and not paid. ATL returned these reasons:
+- "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+- Rule hit: R8_SPLIT_PATTERN
+
+Note that NF-5701 (R$ 17.00) was paid to the same payee within the same 24 hours, and the two together exceed the R$ 30.00 cap. Please review both invoices with the supplier if this is unexpected. I did not retry or change any values.

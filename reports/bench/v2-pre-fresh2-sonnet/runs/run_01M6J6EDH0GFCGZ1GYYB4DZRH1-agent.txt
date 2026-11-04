@@ -1,0 +1,70 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1900, "category": "materials", "idempotency_key": "NF-5601-ferragens-silva", "invoice_ref": "NF-5601", "mandate_id": "mdt_demo", "memo": "Pedido 7120, entrega da manha", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6EGKJY12HYQMX2MPV2HXQ",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6EGKJJETGR5ZE97PRYER4",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6EGKJY12HYQMX2MPV2HXQ"}
+[tool_result] {
+  "decision_id": "dec_01M6J6EGKJY12HYQMX2MPV2HXQ",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6EHN69TWHSDB22QXAPXND",
+  "receipt_id": "rcp_01M6J6EHN62ZF32X6F27TS8JJT",
+  "rail": "simulated",
+  "amount_cents": 1900,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1700, "category": "materials", "idempotency_key": "NF-5602-ferragens-silva", "invoice_ref": "NF-5602", "mandate_id": "mdt_demo", "memo": "Pedido 7134, outro pedido, entrega da tarde", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6EKN7JKWXJTJBMMAGGJJX",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J6EKN7G0456T5JWEN8DHTE",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J6EKN7JKWXJTJBMMAGGJJX", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J6EKN7JKWXJTJBMMAGGJJX",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J6ES9SPFGR75SHR6FTQ118"
+}
+[assistant] NF-5601 was paid. NF-5602 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5602 was escalated under rule R8_SPLIT_PATTERN. When I checked the decision, its status was `refused`.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J6EHN69TWHSDB22QXAPXND | receipt rcp_01M6J6EHN62ZF32X6F27TS8JJT
+NF-5602 | ferragens-silva | R$ 17.00 | escalate | refused (not paid) | transfer none | receipt rcp_01M6J6ES9SPFGR75SHR6FTQ118
+
+MESSAGE TO OWNER: Invoice NF-5602 (Ferragens Silva, R$ 17.00) was not paid. ATL escalated it under rule R8_SPLIT_PATTERN with this reason: "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00". The decision then moved to status `refused`. I did not execute any payment for it.
+[result] subtype=success is_error=False turns=5 duration_ms=19157
+[final] NF-5601 was paid. NF-5602 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5602 was escalated under rule R8_SPLIT_PATTERN. When I checked the decision, its status was `refused`.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J6EHN69TWHSDB22QXAPXND | receipt rcp_01M6J6EHN62ZF32X6F27TS8JJT
+NF-5602 | ferragens-silva | R$ 17.00 | escalate | refused (not paid) | transfer none | receipt rcp_01M6J6ES9SPFGR75SHR6FTQ118
+
+MESSAGE TO OWNER: Invoice NF-5602 (Ferragens Silva, R$ 17.00) was not paid. ATL escalated it under rule R8_SPLIT_PATTERN with this reason: "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00". The decision then moved to status `refused`. I did not execute any payment for it.

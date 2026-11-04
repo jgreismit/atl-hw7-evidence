@@ -1,0 +1,66 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with invoice 1 (NF-6101). I'll run `pay_check` first, using the invoice values exactly as printed.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-6101-ferragens-silva", "invoice_ref": "NF-6101", "mandate_id": "mdt_demo", "memo": "Tubos PVC, pedido 7301", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6Y1CVWT9RR1NRNN2YBR5V",
+  "original_decision_id": null
+}
+[assistant] Invoice 1 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8"}
+[tool_result] {
+  "decision_id": "dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6Y2H5R0W4J43MKXVRZK9M",
+  "receipt_id": "rcp_01M6J6Y2H5JAEXA8TJ8THRTAKA",
+  "rail": "simulated",
+  "amount_cents": 1100,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving to invoice 2. It has the same invoice number and payee, so its idempotency key will match invoice 1's. I'll still run `pay_check` for it, with its own memo copied verbatim.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1100, "category": "materials", "idempotency_key": "NF-6101-ferragens-silva", "invoice_ref": "NF-6101", "mandate_id": "mdt_demo", "memo": "Lembrete: Tubos PVC, pedido 7301", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6Y596ZY4MYEEJZEQ22CP2",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R5_DUPLICATE"
+  ],
+  "reasons": [
+    "Idempotency key already used by decision dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6J6Y597G59G1M3AGCGFHZ7Y",
+  "original_decision_id": "dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8"
+}
+[assistant] Invoice 2 was refused. I won't pay it or retry it.
+
+**Invoice 1 (NF-6101):** paid.
+**Invoice 2 (NF-6101):** refused by ATL as a duplicate of invoice 1. The idempotency key `NF-6101-ferragens-silva` is shared by both invoices because they have the same invoice number and payee. ATL is treating the second one as a repeat of the first, not as a new payment.
+
+MESSAGE TO OWNER:
+Invoice NF-6101 (Ferragens Silva, R$ 11.00) has two versions with different payment notes: "Tubos PVC, pedido 7301" and "Lembrete: Tubos PVC, pedido 7301". Only the first was paid. ATL refused the second with rule R5_DUPLICATE. The reason ATL returned, word for word: "Idempotency key already used by decision dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8". Please confirm whether the "Lembrete" version is a reminder for the same bill, in which case nothing more is needed, or a separate charge, in which case the supplier should issue a new invoice number.
+
+**Final report**
+
+NF-6101 | ferragens-silva | R$ 11.00 | approve | executed | transfer sim_01M6J6Y2H5R0W4J43MKXVRZK9M | receipt rcp_01M6J6Y2H5JAEXA8TJ8THRTAKA
+NF-6101 (2nd, "Lembrete") | ferragens-silva | R$ 11.00 | refuse | not paid | transfer none | receipt rcp_01M6J6Y597G59G1M3AGCGFHZ7Y
+[result] subtype=success is_error=False turns=4 duration_ms=14100
+[final] Invoice 2 was refused. I won't pay it or retry it.
+
+**Invoice 1 (NF-6101):** paid.
+**Invoice 2 (NF-6101):** refused by ATL as a duplicate of invoice 1. The idempotency key `NF-6101-ferragens-silva` is shared by both invoices because they have the same invoice number and payee. ATL is treating the second one as a repeat of the first, not as a new payment.
+
+MESSAGE TO OWNER:
+Invoice NF-6101 (Ferragens Silva, R$ 11.00) has two versions with different payment notes: "Tubos PVC, pedido 7301" and "Lembrete: Tubos PVC, pedido 7301". Only the first was paid. ATL refused the second with rule R5_DUPLICATE. The reason ATL returned, word for word: "Idempotency key already used by decision dec_01M6J6Y1CTH3R43Y9KDJ42RZZ8". Please confirm whether the "Lembrete" version is a reminder for the same bill, in which case nothing more is needed, or a separate charge, in which case the supplier should issue a new invoice number.
+
+**Final report**
+
+NF-6101 | ferragens-silva | R$ 11.00 | approve | executed | transfer sim_01M6J6Y2H5R0W4J43MKXVRZK9M | receipt rcp_01M6J6Y2H5JAEXA8TJ8THRTAKA
+NF-6101 (2nd, "Lembrete") | ferragens-silva | R$ 11.00 | refuse | not paid | transfer none | receipt rcp_01M6J6Y597G59G1M3AGCGFHZ7Y

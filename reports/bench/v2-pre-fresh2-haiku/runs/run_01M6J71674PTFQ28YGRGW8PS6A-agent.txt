@@ -1,0 +1,101 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2900, "category": "materials", "idempotency_key": "NF-6001-concreto-forte", "invoice_ref": "NF-6001", "mandate_id": "mdt_demo", "memo": "Brita 1, pedido 7201", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J718T8E6D1ANY9ANXE38ZE",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J718T88VG1R1V270EKXHAR",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J718T8E6D1ANY9ANXE38ZE"}
+[tool_result] {
+  "decision_id": "dec_01M6J718T8E6D1ANY9ANXE38ZE",
+  "status": "executed",
+  "transfer_id": "sim_01M6J71A7JYCYE4DVFB169GDBG",
+  "receipt_id": "rcp_01M6J71A7JHEZHAA56PK6F77GJ",
+  "rail": "simulated",
+  "amount_cents": 2900,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2700, "category": "materials", "idempotency_key": "NF-6002-ferragens-silva", "invoice_ref": "NF-6002", "mandate_id": "mdt_demo", "memo": "Pas, pedido 7202", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J71BPK25BM8G8871K5YY2F",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J71BPKZ3RK27KKEZ3HE8HP",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J71BPK25BM8G8871K5YY2F"}
+[tool_result] {
+  "decision_id": "dec_01M6J71BPK25BM8G8871K5YY2F",
+  "status": "executed",
+  "transfer_id": "sim_01M6J71CKSYGNVGYFS1430455X",
+  "receipt_id": "rcp_01M6J71CKTNAQ0F9N8MGMWQPN6",
+  "rail": "simulated",
+  "amount_cents": 2700,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-6003-concreto-forte", "invoice_ref": "NF-6003", "mandate_id": "mdt_demo", "memo": "Areia media, pedido 7203", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J71EQ5QZB222C7RBWYPV5P",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00",
+    "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J71EQ552HGDM506CWZ29YM",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J71EQ5QZB222C7RBWYPV5P", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J71EQ5QZB222C7RBWYPV5P",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00",
+    "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J71KYKC0D71K2XPAEDPGD9"
+}
+[assistant] Invoices 1 and 2 were paid. Invoice 3 was refused by ATL and not paid.
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J71A7JYCYE4DVFB169GDBG | receipt rcp_01M6J71A7JHEZHAA56PK6F77GJ
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J71CKSYGNVGYFS1430455X | receipt rcp_01M6J71CKTNAQ0F9N8MGMWQPN6
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J71KYKC0D71K2XPAEDPGD9
+
+MESSAGE TO OWNER: Invoice NF-6003 (Concreto Forte, R$ 26.00, Pix key cliente-a00001@pix.bcb.gov.br, memo "Areia media, pedido 7203") was not paid. ATL escalated it and the decision was then refused (decision dec_01M6J71EQ5QZB222C7RBWYPV5P). ATL gave these reasons:
+- "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+- "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. I did not retry this invoice. Please review it before any further payment to concreto-forte.
+[result] subtype=success is_error=False turns=7 duration_ms=20463
+[final] Invoices 1 and 2 were paid. Invoice 3 was refused by ATL and not paid.
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J71A7JYCYE4DVFB169GDBG | receipt rcp_01M6J71A7JHEZHAA56PK6F77GJ
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J71CKSYGNVGYFS1430455X | receipt rcp_01M6J71CKTNAQ0F9N8MGMWQPN6
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J71KYKC0D71K2XPAEDPGD9
+
+MESSAGE TO OWNER: Invoice NF-6003 (Concreto Forte, R$ 26.00, Pix key cliente-a00001@pix.bcb.gov.br, memo "Areia media, pedido 7203") was not paid. ATL escalated it and the decision was then refused (decision dec_01M6J71EQ5QZB222C7RBWYPV5P). ATL gave these reasons:
+- "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+- "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. I did not retry this invoice. Please review it before any further payment to concreto-forte.

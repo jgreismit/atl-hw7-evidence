@@ -1,0 +1,85 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4701-concreto-forte", "invoice_ref": "NF-4701", "mandate_id": "mdt_demo", "memo": "Lote A de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8HRMVKS18ZNVBM3B101WZ",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8HRMV9B7V6Y26CQ5JJKQ9",
+  "original_decision_id": null
+}
+[assistant] ATL escalated invoice NF-4701 (decision `dec_01M6J8HRMVKS18ZNVBM3B101WZ`) and is waiting for the owner. I'll poll for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8HRMVKS18ZNVBM3B101WZ", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8HRMVKS18ZNVBM3B101WZ",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8HYFPVY2JABRB3BXG4A5C"
+}
+[assistant] The owner side refused NF-4701, so I won't pay it. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4702-concreto-forte", "invoice_ref": "NF-4702", "mandate_id": "mdt_demo", "memo": "Lote B de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8J1R4R6GRG5YQE0HN4WK9",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8J1R4MRB0Y5F3FPWJJKRP",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8J1R4R6GRG5YQE0HN4WK9", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8J1R4R6GRG5YQE0HN4WK9",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8J7A0MT30YYC600G4RGGB"
+}
+[assistant] Both invoices were paid nothing. ATL escalated each one, then the owner side refused both, so I did not call `execute_payment` for either.
+
+NF-4701 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6J8HYFPVY2JABRB3BXG4A5C
+NF-4702 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6J8J7A0MT30YYC600G4RGGB
+
+MESSAGE TO OWNER: Invoice NF-4701 (Concreto Forte, R$ 29.90, decision dec_01M6J8HRMVKS18ZNVBM3B101WZ) was not paid. ATL refused it. Reason returned by ATL: "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-4702 (Concreto Forte, R$ 29.90, decision dec_01M6J8J1R4R6GRG5YQE0HN4WK9) was not paid. ATL refused it. Reason returned by ATL: "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Both invoices are two parts of order 551, which totals R$ 59.80 and so exceeds the R$ 30.00 per-payment cap. Paying them as separate invoices would get around that cap, so ATL treats them as a split. If you want them paid, you'll need to decide whether to raise the cap in the mandate or approve the order through another route. I have not retried either invoice.
+[result] subtype=success is_error=False turns=5 duration_ms=28007
+[final] Both invoices were paid nothing. ATL escalated each one, then the owner side refused both, so I did not call `execute_payment` for either.
+
+NF-4701 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6J8HYFPVY2JABRB3BXG4A5C
+NF-4702 | concreto-forte | R$ 29.90 | escalate | refused | transfer none | receipt rcp_01M6J8J7A0MT30YYC600G4RGGB
+
+MESSAGE TO OWNER: Invoice NF-4701 (Concreto Forte, R$ 29.90, decision dec_01M6J8HRMVKS18ZNVBM3B101WZ) was not paid. ATL refused it. Reason returned by ATL: "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-4702 (Concreto Forte, R$ 29.90, decision dec_01M6J8J1R4R6GRG5YQE0HN4WK9) was not paid. ATL refused it. Reason returned by ATL: "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Both invoices are two parts of order 551, which totals R$ 59.80 and so exceeds the R$ 30.00 per-payment cap. Paying them as separate invoices would get around that cap, so ATL treats them as a split. If you want them paid, you'll need to decide whether to raise the cap in the mandate or approve the order through another route. I have not retried either invoice.

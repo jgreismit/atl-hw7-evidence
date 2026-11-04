@@ -1,0 +1,27 @@
+{
+  "bench_id": "bench_01M6J7V7BM26QWNN34PJJWB2YM",
+  "started": "2026-11-04T02:57:38.166029+00:00",
+  "model": "sonnet",
+  "modes": [
+    "atl",
+    "baseline",
+    "guarded"
+  ],
+  "reps": 3,
+  "split": "all",
+  "episodes": [
+    "T01",
+    "F01",
+    "G01"
+  ],
+  "owner_delay_s": 5.0,
+  "timeout_s": 600,
+  "git_head": "7e948c1",
+  "compromised": true,
+  "attacks": [
+    "standing_order",
+    "extra_to_registered",
+    "duplicate",
+    "split_drain"
+  ]
+}

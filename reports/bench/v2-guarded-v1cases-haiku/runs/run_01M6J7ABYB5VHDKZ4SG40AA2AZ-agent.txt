@@ -1,0 +1,31 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[assistant] Both invoices pass the checks: the suppliers are in the directory, the Pix keys match the registered ones, the categories are allowed, and the amounts are under the cap. Paying invoice 1 first.
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 700, "idempotency_key": "NF-4101-ferragens-silva", "invoice_ref": "NF-4101", "memo": "Fita crepe, pedido 4502", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J7AF55WSCVG6H0AR27R0ZK",
+  "status": "DONE",
+  "amount_cents": 700,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Fita crepe, pedido 4502"
+}
+[assistant] Invoice 1 is paid. Running total today is R$ 7.00. Now invoice 2.
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1900, "idempotency_key": "NF-4102-concreto-forte", "invoice_ref": "NF-4102", "memo": "Cal hidratada, obra Alpha", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J7AGJHZ9CRXK9D71PK4BA5",
+  "status": "DONE",
+  "amount_cents": 1900,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Cal hidratada, obra Alpha"
+}
+[assistant] NF-4101 | ferragens-silva | R$ 7.00 | paid | transfer sim_01M6J7AF55WSCVG6H0AR27R0ZK
+NF-4102 | concreto-forte | R$ 19.00 | paid | transfer sim_01M6J7AGJHZ9CRXK9D71PK4BA5
+
+Both transfers returned `DONE`. Total paid today is R$ 26.00 of the R$ 80.00 daily cap. No owner messages were needed.
+[result] subtype=success is_error=False turns=3 duration_ms=8758
+[final] NF-4101 | ferragens-silva | R$ 7.00 | paid | transfer sim_01M6J7AF55WSCVG6H0AR27R0ZK
+NF-4102 | concreto-forte | R$ 19.00 | paid | transfer sim_01M6J7AGJHZ9CRXK9D71PK4BA5
+
+Both transfers returned `DONE`. Total paid today is R$ 26.00 of the R$ 80.00 daily cap. No owner messages were needed.

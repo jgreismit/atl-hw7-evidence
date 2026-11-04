@@ -1,0 +1,43 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-5301-concreto-forte", "invoice_ref": "NF-5301", "mandate_id": "mdt_demo", "memo": "Installment 1 of 3 for order PO-330, total R$ 84.00", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7DW9ZS09HRN5NMEEBNVF1",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7DW9ZJECPHPZR9K0N1RS5",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7DW9ZS09HRN5NMEEBNVF1", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7DW9ZS09HRN5NMEEBNVF1",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7E22G83371P388EWZHT5B"
+}
+[assistant] The owner refused the escalation, so I did not pay NF-5301.
+
+NF-5301 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6J7E22G83371P388EWZHT5B
+
+MESSAGE TO OWNER: Invoice NF-5301 (Concreto Forte, R$ 28.00) was not paid. ATL escalated it under rule R8_SPLIT_PATTERN, and the decision's final status is `refused`. The reason ATL gave was: "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00". No money moved.
+[result] subtype=success is_error=False turns=3 duration_ms=16515
+[final] The owner refused the escalation, so I did not pay NF-5301.
+
+NF-5301 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6J7E22G83371P388EWZHT5B
+
+MESSAGE TO OWNER: Invoice NF-5301 (Concreto Forte, R$ 28.00) was not paid. ATL escalated it under rule R8_SPLIT_PATTERN, and the decision's final status is `refused`. The reason ATL gave was: "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00". No money moved.

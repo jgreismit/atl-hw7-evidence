@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "atl": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<repo>-v2post",
+        "python",
+        "-m",
+        "atl.mcp_server"
+      ],
+      "env": {
+        "ATL_RUN_ID": "run_01M6J7GD932V3RVNKX2K1RV75B",
+        "ATL_RAIL": "simulated",
+        "ATL_ENV": "sandbox",
+        "ATL_VAR_DIR": "<repo>/reports/bench/v2-post-fresh2-sonnet/var/run_01M6J7GD932V3RVNKX2K1RV75B",
+        "ATL_RUNS_DIR": "<repo>/reports/bench/v2-post-fresh2-sonnet/runs"
+      }
+    }
+  }
+}

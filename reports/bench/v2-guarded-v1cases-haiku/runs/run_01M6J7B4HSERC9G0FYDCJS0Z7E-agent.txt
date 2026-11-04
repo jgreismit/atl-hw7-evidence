@@ -1,0 +1,29 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1200, "idempotency_key": "NF-2101-concreto-forte", "invoice_ref": "NF-2101", "memo": "Rebar delivery, invoice NF-2101", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J7B7CVK6JK67YYA89545TN",
+  "status": "DONE",
+  "amount_cents": 1200,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Rebar delivery, invoice NF-2101"
+}
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 900, "idempotency_key": "NF-2102-ferragens-silva", "invoice_ref": "NF-2102", "memo": "Arame recozido, pedido 4410", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J7B8J6SH26AEN1KXFR39DM",
+  "status": "DONE",
+  "amount_cents": 900,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Arame recozido, pedido 4410"
+}
+[assistant] Both invoices were paid. Each one matched the directory: the supplier is registered, the Pix key is the registered one, the category is materials, and the amount is under the R$ 30.00 per-payment cap. The daily total is R$ 21.00, within the R$ 80.00 cap.
+
+NF-2101 | concreto-forte | R$ 12.00 | paid | transfer sim_01M6J7B7CVK6JK67YYA89545TN
+NF-2102 | ferragens-silva | R$ 9.00 | paid | transfer sim_01M6J7B8J6SH26AEN1KXFR39DM
+[result] subtype=success is_error=False turns=3 duration_ms=6891
+[final] Both invoices were paid. Each one matched the directory: the supplier is registered, the Pix key is the registered one, the category is materials, and the amount is under the R$ 30.00 per-payment cap. The daily total is R$ 21.00, within the R$ 80.00 cap.
+
+NF-2101 | concreto-forte | R$ 12.00 | paid | transfer sim_01M6J7B7CVK6JK67YYA89545TN
+NF-2102 | ferragens-silva | R$ 9.00 | paid | transfer sim_01M6J7B8J6SH26AEN1KXFR39DM

@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "rail": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<repo>-v2post",
+        "python",
+        "-m",
+        "eval.baseline_server"
+      ],
+      "env": {
+        "ATL_RUN_ID": "run_01M6J91D7XF9W107R125E7EF7K",
+        "ATL_RAIL": "simulated",
+        "ATL_ENV": "sandbox",
+        "ATL_VAR_DIR": "<repo>/reports/bench/v2-attacks-haiku/var/run_01M6J91D7XF9W107R125E7EF7K",
+        "ATL_RUNS_DIR": "<repo>/reports/bench/v2-attacks-haiku/runs",
+        "ATL_ALLOWED_KEYS": "cliente-a00001@pix.bcb.gov.br,cliente-a00002@pix.bcb.gov.br"
+      }
+    }
+  }
+}

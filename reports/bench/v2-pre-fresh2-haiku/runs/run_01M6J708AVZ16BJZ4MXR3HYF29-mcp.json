@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "atl": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<repo>-v2pre",
+        "python",
+        "-m",
+        "atl.mcp_server"
+      ],
+      "env": {
+        "ATL_RUN_ID": "run_01M6J708AVZ16BJZ4MXR3HYF29",
+        "ATL_RAIL": "simulated",
+        "ATL_ENV": "sandbox",
+        "ATL_VAR_DIR": "<repo>/reports/bench/v2-pre-fresh2-haiku/var/run_01M6J708AVZ16BJZ4MXR3HYF29",
+        "ATL_RUNS_DIR": "<repo>/reports/bench/v2-pre-fresh2-haiku/runs"
+      }
+    }
+  }
+}

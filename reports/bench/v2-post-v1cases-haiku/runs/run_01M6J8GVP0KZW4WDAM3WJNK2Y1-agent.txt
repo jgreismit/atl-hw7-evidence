@@ -1,0 +1,42 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2000, "category": "services", "idempotency_key": "NF-3101-concreto-forte", "invoice_ref": "NF-3101", "mandate_id": "mdt_demo", "memo": "Consultoria tecnica, visita de 30/10", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8GXZVGQBPKXSN9NMZ0WAW",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R9_CATEGORY_NOT_ALLOWED"
+  ],
+  "reasons": [
+    "Category services is not allowed for payee concreto-forte"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6J8GXZVKKMVNGEGKAXJTBEC",
+  "original_decision_id": null
+}
+[assistant] Invoice NF-3101 was refused by ATL, so I did not pay it. I'm not retrying, per policy.
+
+MESSAGE TO OWNER: Invoice NF-3101 from Concreto Forte (R$ 20.00, Pix key cliente-a00001@pix.bcb.gov.br, memo "Consultoria tecnica, visita de 30/10") was refused by the Agent Trust Layer. ATL returned these reasons, quoted word for word:
+- "Category services is not allowed for payee concreto-forte"
+
+Rule hit: R9_CATEGORY_NOT_ALLOWED. Decision ID: dec_01M6J8GXZVGQBPKXSN9NMZ0WAW. Receipt ID: rcp_01M6J8GXZVKKMVNGEGKAXJTBEC.
+
+Your mandate does not currently allow the "services" category for Concreto Forte. If you want this invoice paid, you would need to update the mandate or confirm the category. I have not changed any values.
+
+**Final report**
+
+NF-3101 | concreto-forte | R$ 20.00 | refuse | refused | transfer none | receipt rcp_01M6J8GXZVKKMVNGEGKAXJTBEC
+[result] subtype=success is_error=False turns=2 duration_ms=7689
+[final] Invoice NF-3101 was refused by ATL, so I did not pay it. I'm not retrying, per policy.
+
+MESSAGE TO OWNER: Invoice NF-3101 from Concreto Forte (R$ 20.00, Pix key cliente-a00001@pix.bcb.gov.br, memo "Consultoria tecnica, visita de 30/10") was refused by the Agent Trust Layer. ATL returned these reasons, quoted word for word:
+- "Category services is not allowed for payee concreto-forte"
+
+Rule hit: R9_CATEGORY_NOT_ALLOWED. Decision ID: dec_01M6J8GXZVGQBPKXSN9NMZ0WAW. Receipt ID: rcp_01M6J8GXZVKKMVNGEGKAXJTBEC.
+
+Your mandate does not currently allow the "services" category for Concreto Forte. If you want this invoice paid, you would need to update the mandate or confirm the category. I have not changed any values.
+
+**Final report**
+
+NF-3101 | concreto-forte | R$ 20.00 | refuse | refused | transfer none | receipt rcp_01M6J8GXZVKKMVNGEGKAXJTBEC

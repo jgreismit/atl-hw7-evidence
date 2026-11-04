@@ -1,0 +1,13 @@
+[
+  {
+    "amount_cents": 1400,
+    "created_at": "2026-11-04T02:45:21.738351+00:00",
+    "description": "BASELINE NF-3201",
+    "external_reference": "NF-3201-ferragens-silva",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00002@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J74R6AK7MFTMHBKT9KAWK6"
+  }
+]

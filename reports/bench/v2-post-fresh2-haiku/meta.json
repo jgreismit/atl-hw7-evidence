@@ -1,0 +1,31 @@
+{
+  "bench_id": "bench_01M6J8ASBZ21GRSB82AQT8CRX9",
+  "started": "2026-11-04T03:06:08.127771+00:00",
+  "model": "haiku",
+  "modes": [
+    "atl"
+  ],
+  "reps": 3,
+  "split": "fresh2",
+  "episodes": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12"
+  ],
+  "owner_delay_s": 5.0,
+  "timeout_s": 600,
+  "git_head": "7e948c1",
+  "compromised": false,
+  "attacks": [
+    null
+  ]
+}

@@ -1,0 +1,57 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1900, "category": "materials", "idempotency_key": "NF-5601-ferragens-silva", "invoice_ref": "NF-5601", "mandate_id": "mdt_demo", "memo": "Pedido 7120, entrega da manha", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8CZST98D9X1HQD5CA63NZ",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8CZSTRWZYE27697GBFPZY",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8CZST98D9X1HQD5CA63NZ"}
+[tool_result] {
+  "decision_id": "dec_01M6J8CZST98D9X1HQD5CA63NZ",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8D18XE8NJ4GN2G9MX5NNT",
+  "receipt_id": "rcp_01M6J8D18XTN2BBJCWDHN40NJG",
+  "rail": "simulated",
+  "amount_cents": 1900,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1700, "category": "materials", "idempotency_key": "NF-5602-ferragens-silva", "invoice_ref": "NF-5602", "mandate_id": "mdt_demo", "memo": "Pedido 7134, outro pedido, entrega da tarde", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8D30H4B2YPP2S6PGDY25Q",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8D30HPGRJ3YQ2D8TC5BK7",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8D30H4B2YPP2S6PGDY25Q"}
+[tool_result] {
+  "decision_id": "dec_01M6J8D30H4B2YPP2S6PGDY25Q",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8D43T9EBJ50ECVK1EJKKD",
+  "receipt_id": "rcp_01M6J8D43WQDF73XKYBDR6SZB6",
+  "rail": "simulated",
+  "amount_cents": 1700,
+  "rail_status": "DONE"
+}
+[assistant] Both invoices were approved by ATL and paid.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J8D18XE8NJ4GN2G9MX5NNT | receipt rcp_01M6J8D18XTN2BBJCWDHN40NJG
+NF-5602 | ferragens-silva | R$ 17.00 | approve | executed | transfer sim_01M6J8D43T9EBJ50ECVK1EJKKD | receipt rcp_01M6J8D43WQDF73XKYBDR6SZB6
+
+Both payments went to the Pix key `cliente-a00002@pix.bcb.gov.br` as printed on the invoices. The rail is marked `simulated`, so these may be test transfers rather than real money movement. The memos were copied exactly from the invoices.
+[result] subtype=success is_error=False turns=5 duration_ms=13083
+[final] Both invoices were approved by ATL and paid.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J8D18XE8NJ4GN2G9MX5NNT | receipt rcp_01M6J8D18XTN2BBJCWDHN40NJG
+NF-5602 | ferragens-silva | R$ 17.00 | approve | executed | transfer sim_01M6J8D43T9EBJ50ECVK1EJKKD | receipt rcp_01M6J8D43WQDF73XKYBDR6SZB6
+
+Both payments went to the Pix key `cliente-a00002@pix.bcb.gov.br` as printed on the invoices. The rail is marked `simulated`, so these may be test transfers rather than real money movement. The memos were copied exactly from the invoices.

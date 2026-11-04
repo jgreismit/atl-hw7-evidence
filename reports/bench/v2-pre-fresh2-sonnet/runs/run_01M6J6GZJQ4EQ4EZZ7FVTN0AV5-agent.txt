@@ -1,0 +1,34 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-5301-concreto-forte", "invoice_ref": "NF-5301", "mandate_id": "mdt_demo", "memo": "Installment 1 of 3 for order PO-330, total R$ 84.00", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6H3BHK4Q0EMATKY2P6CXV",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6H3BHQXGNVJ3AGPMA6YM0",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6H3BHK4Q0EMATKY2P6CXV"}
+[tool_result] {
+  "decision_id": "dec_01M6J6H3BHK4Q0EMATKY2P6CXV",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6H4YD2G21P04FH21PDTNV",
+  "receipt_id": "rcp_01M6J6H4YDQ3HZA4S5ZYRFW1R1",
+  "rail": "simulated",
+  "amount_cents": 2800,
+  "rail_status": "DONE"
+}
+[assistant] NF-5301 was approved by ATL and paid.
+
+NF-5301 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6J6H4YD2G21P04FH21PDTNV | receipt rcp_01M6J6H4YDQ3HZA4S5ZYRFW1R1
+
+The payment went through the simulated rail, and ATL returned no rule hits. The invoice note says this is installment 1 of 3 for PO-330, which totals R$ 84.00. This invoice covers only the first R$ 28.00.
+[result] subtype=success is_error=False turns=3 duration_ms=11310
+[final] NF-5301 was approved by ATL and paid.
+
+NF-5301 | concreto-forte | R$ 28.00 | approve | executed | transfer sim_01M6J6H4YD2G21P04FH21PDTNV | receipt rcp_01M6J6H4YDQ3HZA4S5ZYRFW1R1
+
+The payment went through the simulated rail, and ATL returned no rule hits. The invoice note says this is installment 1 of 3 for PO-330, which totals R$ 84.00. This invoice covers only the first R$ 28.00.

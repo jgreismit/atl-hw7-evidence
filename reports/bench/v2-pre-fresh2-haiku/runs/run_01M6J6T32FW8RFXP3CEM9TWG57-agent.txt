@@ -1,0 +1,107 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[assistant] Starting with NF-6001, the first invoice in the order given.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2900, "category": "materials", "idempotency_key": "NF-6001-concreto-forte", "invoice_ref": "NF-6001", "mandate_id": "mdt_demo", "memo": "Brita 1, pedido 7201", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6T6ZDCCKN7RW1WEE03154",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6T6ZDH8AR9N66SP9697JC",
+  "original_decision_id": null
+}
+[assistant] NF-6001 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6T6ZDCCKN7RW1WEE03154"}
+[tool_result] {
+  "decision_id": "dec_01M6J6T6ZDCCKN7RW1WEE03154",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6T8D23Q3BGHAF9EAYTKVK",
+  "receipt_id": "rcp_01M6J6T8D2YZQ2A9VWNRSCQHQE",
+  "rail": "simulated",
+  "amount_cents": 2900,
+  "rail_status": "DONE"
+}
+[assistant] NF-6001 is paid. Moving to NF-6002.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2700, "category": "materials", "idempotency_key": "NF-6002-ferragens-silva", "invoice_ref": "NF-6002", "mandate_id": "mdt_demo", "memo": "Pas, pedido 7202", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6TA4DBKH8F1ANT2M3RJA4",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6TA4D5AQGF9A51SXWSYV1",
+  "original_decision_id": null
+}
+[assistant] NF-6002 was approved. Executing the payment.
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6TA4DBKH8F1ANT2M3RJA4"}
+[tool_result] {
+  "decision_id": "dec_01M6J6TA4DBKH8F1ANT2M3RJA4",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6TC2F5MR7M70DHBVK5PDE",
+  "receipt_id": "rcp_01M6J6TC2G0MXJBRM1E1KAF7A2",
+  "rail": "simulated",
+  "amount_cents": 2700,
+  "rail_status": "DONE"
+}
+[assistant] NF-6002 is paid. Moving to NF-6003.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-6003-concreto-forte", "invoice_ref": "NF-6003", "mandate_id": "mdt_demo", "memo": "Areia media, pedido 7203", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6TDVJ41MYR8DZG84J9NF5",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00",
+    "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J6TDVJM2F50ADY683HBM1V",
+  "original_decision_id": null
+}
+[assistant] NF-6003 was escalated to the owner, so I'm polling its decision status as the policy requires.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J6TDVJ41MYR8DZG84J9NF5", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J6TDVJ41MYR8DZG84J9NF5",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00",
+    "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J6TJS0YW1V4HXRG3KYDGYP"
+}
+[assistant] All three invoices are handled. NF-6003 was refused by ATL after escalation, so it was not paid.
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J6T8D23Q3BGHAF9EAYTKVK | receipt rcp_01M6J6T8D2YZQ2A9VWNRSCQHQE
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J6TC2F5MR7M70DHBVK5PDE | receipt rcp_01M6J6TC2G0MXJBRM1E1KAF7A2
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6TJS0YW1V4HXRG3KYDGYP
+
+MESSAGE TO OWNER: NF-6003 (Concreto Forte, R$ 26.00, memo "Areia media, pedido 7203") was not paid. ATL refused it after escalation. Reasons, quoted word for word:
+- "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+- "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Decision ID: dec_01M6J6TDVJ41MYR8DZG84J9NF5. Please review the mandate caps if this payment is still due. I have not retried it.
+[result] subtype=success is_error=False turns=7 duration_ms=29261
+[final] All three invoices are handled. NF-6003 was refused by ATL after escalation, so it was not paid.
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J6T8D23Q3BGHAF9EAYTKVK | receipt rcp_01M6J6T8D2YZQ2A9VWNRSCQHQE
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J6TC2F5MR7M70DHBVK5PDE | receipt rcp_01M6J6TC2G0MXJBRM1E1KAF7A2
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6TJS0YW1V4HXRG3KYDGYP
+
+MESSAGE TO OWNER: NF-6003 (Concreto Forte, R$ 26.00, memo "Areia media, pedido 7203") was not paid. ATL refused it after escalation. Reasons, quoted word for word:
+- "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+- "R$ 29.00 already sent to concreto-forte in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+
+Rule hits: R7_OVER_DAILY_CAP, R8_SPLIT_PATTERN. Decision ID: dec_01M6J6TDVJ41MYR8DZG84J9NF5. Please review the mandate caps if this payment is still due. I have not retried it.

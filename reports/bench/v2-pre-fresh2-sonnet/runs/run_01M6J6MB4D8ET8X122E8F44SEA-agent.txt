@@ -1,0 +1,70 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5201-ferragens-silva", "invoice_ref": "NF-5201", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6MEAES5MS96TSYWB42E3F",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6MEAF43K9QK8S6R6NN2K7",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6MEAES5MS96TSYWB42E3F"}
+[tool_result] {
+  "decision_id": "dec_01M6J6MEAES5MS96TSYWB42E3F",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6MFXGWPC9V8RTB9VVC8BP",
+  "receipt_id": "rcp_01M6J6MFXGAFHFRDP2W9BK54WB",
+  "rail": "simulated",
+  "amount_cents": 2600,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5202-ferragens-silva", "invoice_ref": "NF-5202", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6MJAK9JQJTXH4HZDJ9C3G",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J6MJAKYM3HFZNPJZTNEZ72",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J6MJAK9JQJTXH4HZDJ9C3G", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J6MJAK9JQJTXH4HZDJ9C3G",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J6MQWJV64M5PG2HAHJ2AMP"
+}
+[assistant] NF-5201 was paid. NF-5202 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5201 (R$ 26.00) was approved and executed. NF-5202 (R$ 26.00) was escalated under rule R8_SPLIT_PATTERN. The owner's decision came back `refused`, so I did not call `execute_payment`.
+
+NF-5201 | ferragens-silva | R$ 26.00 | approve | executed | transfer sim_01M6J6MFXGWPC9V8RTB9VVC8BP | receipt rcp_01M6J6MFXGAFHFRDP2W9BK54WB
+NF-5202 | ferragens-silva | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6MQWJV64M5PG2HAHJ2AMP
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00) was not paid. ATL escalated it with rule hit R8_SPLIT_PATTERN and this reason: "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00". The escalation was then refused (status `refused`). Order 812 is split across NF-5201 and NF-5202, each R$ 26.00 (total R$ 52.00). Only the first part, NF-5201, has been paid. If you want the second part paid, it needs your explicit decision.
+[result] subtype=success is_error=False turns=5 duration_ms=20972
+[final] NF-5201 was paid. NF-5202 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5201 (R$ 26.00) was approved and executed. NF-5202 (R$ 26.00) was escalated under rule R8_SPLIT_PATTERN. The owner's decision came back `refused`, so I did not call `execute_payment`.
+
+NF-5201 | ferragens-silva | R$ 26.00 | approve | executed | transfer sim_01M6J6MFXGWPC9V8RTB9VVC8BP | receipt rcp_01M6J6MFXGAFHFRDP2W9BK54WB
+NF-5202 | ferragens-silva | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J6MQWJV64M5PG2HAHJ2AMP
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00) was not paid. ATL escalated it with rule hit R8_SPLIT_PATTERN and this reason: "R$ 26.00 already sent to ferragens-silva in 24 h plus R$ 26.00 is above the per-payment cap of R$ 30.00". The escalation was then refused (status `refused`). Order 812 is split across NF-5201 and NF-5202, each R$ 26.00 (total R$ 52.00). Only the first part, NF-5201, has been paid. If you want the second part paid, it needs your explicit decision.

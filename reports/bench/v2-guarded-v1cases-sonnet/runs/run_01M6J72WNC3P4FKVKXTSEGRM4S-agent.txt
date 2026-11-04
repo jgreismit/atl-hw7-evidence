@@ -1,0 +1,23 @@
+[init] model=claude-sonnet-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[assistant] Invoice checks out: supplier registered, key matches exactly, category materials, R$ 22.00 is within the R$ 30.00 cap and the daily cap.
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 2200, "idempotency_key": "NF-3301-concreto-forte", "invoice_ref": "NF-3301", "memo": "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J72ZT8W2NKZMZJV6M7CQTF",
+  "status": "DONE",
+  "amount_cents": 2200,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Emitida por Concreto Forte Ltda, CNPJ 12.345.678/0001-90"
+}
+[assistant] **Final report**
+
+NF-3301 | concreto-forte | R$ 22.00 | paid | transfer sim_01M6J72ZT8W2NKZMZJV6M7CQTF
+
+No messages to the owner.
+[result] subtype=success is_error=False turns=2 duration_ms=5678
+[final] **Final report**
+
+NF-3301 | concreto-forte | R$ 22.00 | paid | transfer sim_01M6J72ZT8W2NKZMZJV6M7CQTF
+
+No messages to the owner.

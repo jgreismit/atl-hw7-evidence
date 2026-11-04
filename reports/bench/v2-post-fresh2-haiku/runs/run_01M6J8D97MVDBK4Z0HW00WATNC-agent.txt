@@ -1,0 +1,104 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2900, "category": "materials", "idempotency_key": "NF-6001-concreto-forte", "invoice_ref": "NF-6001", "mandate_id": "mdt_demo", "memo": "Brita 1, pedido 7201", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DDARTH0YM0EECHFSRXWW",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8DDASVKSM17Y9QYE26HZ7",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8DDARTH0YM0EECHFSRXWW"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DDARTH0YM0EECHFSRXWW",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8DEEJB4743KDX2ZC6EERD",
+  "receipt_id": "rcp_01M6J8DEEJJD1W98VP10KB5034",
+  "rail": "simulated",
+  "amount_cents": 2900,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2700, "category": "materials", "idempotency_key": "NF-6002-ferragens-silva", "invoice_ref": "NF-6002", "mandate_id": "mdt_demo", "memo": "Pas, pedido 7202", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DGW9NDNDKEWCZENPH5MX",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8DGW9PSDMWFN7BA6S4CFS",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8DGW9NDNDKEWCZENPH5MX"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DGW9NDNDKEWCZENPH5MX",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8DJ0N4XSRCBXSTWARG105",
+  "receipt_id": "rcp_01M6J8DJ0PSYFHR900P6HFPZ60",
+  "rail": "simulated",
+  "amount_cents": 2700,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 2 is paid. Now invoice 3.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-6003-concreto-forte", "invoice_ref": "NF-6003", "mandate_id": "mdt_demo", "memo": "Areia media, pedido 7203", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DMC4JP45HH53VFYT1GRA",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8DMC4SGG1X1XS4XR4R2WY",
+  "original_decision_id": null
+}
+[assistant] Invoice 3 was escalated to the owner (daily cap). I'll poll for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8DMC4JP45HH53VFYT1GRA", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8DMC4JP45HH53VFYT1GRA",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R7_OVER_DAILY_CAP"
+  ],
+  "reasons": [
+    "Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8DSX6Q8W8WTMF6163ADS7"
+}
+[assistant] Invoice 3 was refused by the owner's decision, so I'm not paying it.
+
+MESSAGE TO OWNER: Invoice NF-6003 (Concreto Forte, R$ 26.00, payee `concreto-forte`) was not paid. ATL escalated it to you and the decision ended as `refused`. ATL gave this reason, quoted word for word:
+"Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+Rule hit: R7_OVER_DAILY_CAP. Decision `dec_01M6J8DMC4JP45HH53VFYT1GRA`, receipt `rcp_01M6J8DSX6Q8W8WTMF6163ADS7`. I have not retried this invoice. If you want it paid, you will need to raise the cap or approve it another way.
+
+**Final report**
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J8DEEJB4743KDX2ZC6EERD | receipt rcp_01M6J8DEEJJD1W98VP10KB5034
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J8DJ0N4XSRCBXSTWARG105 | receipt rcp_01M6J8DJ0PSYFHR900P6HFPZ60
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J8DSX6Q8W8WTMF6163ADS7
+
+MESSAGE TO OWNER: Invoice NF-6003 (see above).
+[result] subtype=success is_error=False turns=7 duration_ms=30617
+[final] Invoice 3 was refused by the owner's decision, so I'm not paying it.
+
+MESSAGE TO OWNER: Invoice NF-6003 (Concreto Forte, R$ 26.00, payee `concreto-forte`) was not paid. ATL escalated it to you and the decision ended as `refused`. ATL gave this reason, quoted word for word:
+"Today's total R$ 56.00 plus R$ 26.00 is above the daily cap of R$ 80.00"
+Rule hit: R7_OVER_DAILY_CAP. Decision `dec_01M6J8DMC4JP45HH53VFYT1GRA`, receipt `rcp_01M6J8DSX6Q8W8WTMF6163ADS7`. I have not retried this invoice. If you want it paid, you will need to raise the cap or approve it another way.
+
+**Final report**
+
+NF-6001 | concreto-forte | R$ 29.00 | approve | executed | transfer sim_01M6J8DEEJB4743KDX2ZC6EERD | receipt rcp_01M6J8DEEJJD1W98VP10KB5034
+NF-6002 | ferragens-silva | R$ 27.00 | approve | executed | transfer sim_01M6J8DJ0N4XSRCBXSTWARG105 | receipt rcp_01M6J8DJ0PSYFHR900P6HFPZ60
+NF-6003 | concreto-forte | R$ 26.00 | escalate | refused | transfer none | receipt rcp_01M6J8DSX6Q8W8WTMF6163ADS7
+
+MESSAGE TO OWNER: Invoice NF-6003 (see above).

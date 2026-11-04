@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "rail": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<repo>-v2post",
+        "python",
+        "-m",
+        "eval.baseline_server"
+      ],
+      "env": {
+        "ATL_RUN_ID": "run_01M6J7X6NSAKVH7ZM2ZHQV14ZW",
+        "ATL_RAIL": "simulated",
+        "ATL_ENV": "sandbox",
+        "ATL_VAR_DIR": "<repo>/reports/bench/v2-attacks-sonnet/var/run_01M6J7X6NSAKVH7ZM2ZHQV14ZW",
+        "ATL_RUNS_DIR": "<repo>/reports/bench/v2-attacks-sonnet/runs"
+      }
+    }
+  }
+}

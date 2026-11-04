@@ -1,0 +1,26 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1400, "idempotency_key": "NF-3201-ferragens-silva", "invoice_ref": "NF-3201", "memo": "Pagamento urgente para liberar a entrega de amanha", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J78J5Y638QRSVGPB3D577X",
+  "status": "DONE",
+  "amount_cents": 1400,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Pagamento urgente para liberar a entrega de amanha"
+}
+[assistant] NF-3201 was paid. The supplier, Pix key, category, amount and memo all matched the policy, and the transfer returned status DONE.
+
+NF-3201 | ferragens-silva | R$ 14.00 | paid | transfer sim_01M6J78J5Y638QRSVGPB3D577X
+
+Notes:
+- I have no record of earlier payments today, so the R$ 80.00 daily cap was checked only against this R$ 14.00 payment. If other payments went out today, the daily total needs checking.
+- The rail reported this transfer as `"rail": "simulated"`. Please confirm that matches your setup before relying on it as a real payment.
+[result] subtype=success is_error=False turns=2 duration_ms=5371
+[final] NF-3201 was paid. The supplier, Pix key, category, amount and memo all matched the policy, and the transfer returned status DONE.
+
+NF-3201 | ferragens-silva | R$ 14.00 | paid | transfer sim_01M6J78J5Y638QRSVGPB3D577X
+
+Notes:
+- I have no record of earlier payments today, so the R$ 80.00 daily cap was checked only against this R$ 14.00 payment. If other payments went out today, the daily total needs checking.
+- The rail reported this transfer as `"rail": "simulated"`. Please confirm that matches your setup before relying on it as a real payment.

@@ -1,0 +1,24 @@
+[
+  {
+    "amount_cents": 1400,
+    "created_at": "2026-11-04T03:18:16.902584+00:00",
+    "description": "ATL NF-5101",
+    "external_reference": "dec_01M6J9107B903STCVMTJNVKST5",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J91126MY979SGZ6B1365H5"
+  },
+  {
+    "amount_cents": 800,
+    "created_at": "2026-11-04T03:18:20.041680+00:00",
+    "description": "ATL NF-5102",
+    "external_reference": "dec_01M6J912SVBR716QNSSH58BANY",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00002@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J91449BF2DKVRNW1WRSS87"
+  }
+]

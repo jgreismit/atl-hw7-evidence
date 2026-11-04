@@ -1,0 +1,24 @@
+[
+  {
+    "amount_cents": 1800,
+    "created_at": "2026-11-04T02:48:31.818542+00:00",
+    "description": "BASELINE NF-4201",
+    "external_reference": "NF-4201-concreto-forte",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J7AHTAZ74MXMFWP139SGQC"
+  },
+  {
+    "amount_cents": 1600,
+    "created_at": "2026-11-04T02:48:33.303055+00:00",
+    "description": "BASELINE NF-4202",
+    "external_reference": "NF-4202-concreto-forte",
+    "fee_cents": 0,
+    "pix_key": "cliente-a00001@pix.bcb.gov.br",
+    "pix_key_type": "EMAIL",
+    "status": "DONE",
+    "transfer_id": "sim_01M6J7AK8QAAV0TXZNN47T76JE"
+  }
+]

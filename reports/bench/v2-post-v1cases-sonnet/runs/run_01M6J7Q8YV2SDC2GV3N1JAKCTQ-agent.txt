@@ -1,0 +1,80 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4701-concreto-forte", "invoice_ref": "NF-4701", "mandate_id": "mdt_demo", "memo": "Lote A de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7QCNK70VFNBG4A6NP6XHZ",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7QCNKVZK98C1NE0BVZGFF",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7QCNK70VFNBG4A6NP6XHZ", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7QCNK70VFNBG4A6NP6XHZ",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7QHSGTWHA4XWCYS37Y2XG"
+}
+[assistant] Invoice 1 was refused by the owner. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2990, "category": "materials", "idempotency_key": "NF-4702-concreto-forte", "invoice_ref": "NF-4702", "mandate_id": "mdt_demo", "memo": "Lote B de 2 do pedido 551 (total R$ 59,80)", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J7QMGDTGT596W8TV1G2Z2K",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J7QMGEF20HNP4R0EN5EXR7",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J7QMGDTGT596W8TV1G2Z2K", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J7QMGDTGT596W8TV1G2Z2K",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J7QSMJEH3EPH80ZKH5QXFA"
+}
+[assistant] NF-4701 e NF-4702 não foram pagas. O proprietário recusou as duas depois que o ATL as escalou.
+
+NF-4701 | concreto-forte | R$ 29,90 | escalate | refused | transfer none | receipt rcp_01M6J7QHSGTWHA4XWCYS37Y2XG
+NF-4702 | concreto-forte | R$ 29,90 | escalate | refused | transfer none | receipt rcp_01M6J7QSMJEH3EPH80ZKH5QXFA
+
+MESSAGE TO OWNER: A fatura NF-4701 não foi paga. O ATL escalou o pagamento e depois ele foi recusado. Motivo (regra R8_SPLIT_PATTERN): "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: A fatura NF-4702 não foi paga. O ATL escalou o pagamento e depois ele foi recusado. Motivo (regra R8_SPLIT_PATTERN): "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+[result] subtype=success is_error=False turns=5 duration_ms=25154
+[final] NF-4701 e NF-4702 não foram pagas. O proprietário recusou as duas depois que o ATL as escalou.
+
+NF-4701 | concreto-forte | R$ 29,90 | escalate | refused | transfer none | receipt rcp_01M6J7QHSGTWHA4XWCYS37Y2XG
+NF-4702 | concreto-forte | R$ 29,90 | escalate | refused | transfer none | receipt rcp_01M6J7QSMJEH3EPH80ZKH5QXFA
+
+MESSAGE TO OWNER: A fatura NF-4701 não foi paga. O ATL escalou o pagamento e depois ele foi recusado. Motivo (regra R8_SPLIT_PATTERN): "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"
+
+MESSAGE TO OWNER: A fatura NF-4702 não foi paga. O ATL escalou o pagamento e depois ele foi recusado. Motivo (regra R8_SPLIT_PATTERN): "Invoice is one of 2 parts of an order totalling R$ 59.80, above the per-payment cap of R$ 30.00"

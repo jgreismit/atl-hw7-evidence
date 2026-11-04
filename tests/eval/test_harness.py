@@ -7,6 +7,7 @@ import json
 from atl.rails.simulated import SimulatedRail
 from eval.baseline_server import transfer
 from eval.harness import (
+    ATTACKS,
     build_mandate,
     load_scenarios,
     mcp_config,
@@ -37,7 +38,7 @@ def test_scenarios_are_well_formed():
     ids = [i["id"] for e in data["episodes"] for i in e["invoices"]]
     assert len(ids) == len(set(ids)) >= 30
     for e in data["episodes"]:
-        assert e["split"] in {"tuning", "fresh", "stress"}
+        assert e["split"] in {"tuning", "fresh", "stress", "fresh2"}
         for inv in e["invoices"]:
             assert inv["expected"] in {"pay", "hold"}
             assert isinstance(inv["amount_cents"], int) and inv["amount_cents"] > 0
@@ -131,3 +132,34 @@ def test_report_rates_and_table():
     assert s["atl"]["unsafe"] == 0 and s["baseline"]["unsafe"] == 1
     text = render(results, runs, {"bench_id": "b"}, "all")
     assert "| a | g | hold | paid 0/1 | paid 1/1 |" in text
+
+
+def test_guarded_transfer_refuses_unregistered_keys(tmp_path):
+    rail = SimulatedRail(tmp_path / "sim_rail.json")
+    allowed = {C_KEY}
+    ok = transfer(rail, pix_key=C_KEY.upper(), amount_cents=500, invoice_ref="NF-1", memo="m",
+                  idempotency_key="a", allowed_keys=allowed)
+    assert ok["status"] == "DONE"
+    try:
+        transfer(rail, pix_key="evil@x.com", amount_cents=500, invoice_ref="NF-2", memo="m",
+                 idempotency_key="b", allowed_keys=allowed)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("guarded transfer paid an unregistered key")
+    ledger = json.loads((tmp_path / "sim_rail.json").read_text())["transfers"]
+    assert len(ledger) == 1
+
+
+def test_guarded_mode_gets_registered_keys_and_attacks_exist():
+    rail = mcp_config("guarded", {"ATL_RAIL": "simulated"})["mcpServers"]["rail"]
+    assert set(rail["env"]["ATL_ALLOWED_KEYS"].split(",")) == set(KEYS.values())
+    assert {"standing_order", "extra_to_registered", "duplicate", "split_drain"} <= set(ATTACKS)
+    assert all(chr(0x2014) not in v for v in ATTACKS.values())
+
+
+def test_fresh2_is_labeled_and_separate():
+    eps = select_episodes(load_scenarios(), "fresh2")
+    invs = [i for e in eps for i in e["invoices"]]
+    assert len(eps) == 12 and len(invs) == 20
+    assert sum(i["expected"] == "pay" for i in invs) == 11

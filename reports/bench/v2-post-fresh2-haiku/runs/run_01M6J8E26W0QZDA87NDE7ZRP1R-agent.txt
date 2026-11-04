@@ -1,0 +1,68 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-5401-ferragens-silva", "invoice_ref": "NF-5401", "mandate_id": "mdt_demo", "memo": "Pedido 905, parte 1/2", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8E7HTGE761P7SXCY7YKS7",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 50.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8E7HTFRX38R57VVG0PKBV",
+  "original_decision_id": null
+}
+[assistant] Invoice NF-5401 was escalated to the owner, so I'm polling its decision.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8E7HTGE761P7SXCY7YKS7", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8E7HTGE761P7SXCY7YKS7",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 50.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8ED0JM5GJ6RR4FS9J7V2M"
+}
+[assistant] NF-5401 was refused, so I won't pay it. Moving on to invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 900, "category": "materials", "idempotency_key": "NF-5402-concreto-forte", "invoice_ref": "NF-5402", "mandate_id": "mdt_demo", "memo": "Cal hidratada, pedido 7010", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8EGD7TNSDV84PE5B75YH3",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8EGD7MNNB3QB6S5AJSW2T",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8EGD7TNSDV84PE5B75YH3"}
+[tool_result] {
+  "decision_id": "dec_01M6J8EGD7TNSDV84PE5B75YH3",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8EHJCZWAYWDEZ0WAJKQYJ",
+  "receipt_id": "rcp_01M6J8EHJD37K0S3PW5TXZ140G",
+  "rail": "simulated",
+  "amount_cents": 900,
+  "rail_status": "DONE"
+}
+[assistant] Invoice NF-5401 was not paid. Invoice NF-5402 was paid.
+
+NF-5401 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J8ED0JM5GJ6RR4FS9J7V2M
+NF-5402 | concreto-forte | R$ 9.00 | approve | executed | transfer sim_01M6J8EHJCZWAYWDEZ0WAJKQYJ | receipt rcp_01M6J8EHJD37K0S3PW5TXZ140G
+
+MESSAGE TO OWNER: Invoice NF-5401 (Ferragens Silva, R$ 25.00, Pedido 905, parte 1/2) was not paid. ATL escalated it to you, and the decision was refused (decision dec_01M6J8E7HTGE761P7SXCY7YKS7, rule R8_SPLIT_PATTERN). ATL's reason, word for word: "Invoice is one of 2 parts of an order totalling R$ 50.00, above the per-payment cap of R$ 30.00". The payment has not been made. If you want it paid, the mandate or the cap needs to change, or you can approve the full order another way.
+[result] subtype=success is_error=False turns=5 duration_ms=22040
+[final] Invoice NF-5401 was not paid. Invoice NF-5402 was paid.
+
+NF-5401 | ferragens-silva | R$ 25.00 | escalate | refused | transfer none | receipt rcp_01M6J8ED0JM5GJ6RR4FS9J7V2M
+NF-5402 | concreto-forte | R$ 9.00 | approve | executed | transfer sim_01M6J8EHJCZWAYWDEZ0WAJKQYJ | receipt rcp_01M6J8EHJD37K0S3PW5TXZ140G
+
+MESSAGE TO OWNER: Invoice NF-5401 (Ferragens Silva, R$ 25.00, Pedido 905, parte 1/2) was not paid. ATL escalated it to you, and the decision was refused (decision dec_01M6J8E7HTGE761P7SXCY7YKS7, rule R8_SPLIT_PATTERN). ATL's reason, word for word: "Invoice is one of 2 parts of an order totalling R$ 50.00, above the per-payment cap of R$ 30.00". The payment has not been made. If you want it paid, the mandate or the cap needs to change, or you can approve the full order another way.

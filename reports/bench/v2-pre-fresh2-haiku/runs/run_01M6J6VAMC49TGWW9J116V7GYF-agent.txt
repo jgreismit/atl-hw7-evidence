@@ -1,0 +1,33 @@
+[init] model=claude-haiku-5-5 tools=mcp__rail__pix_transfer
+[init] mcp_servers=rail:connected
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 1400, "idempotency_key": "NF-5101-concreto-forte", "invoice_ref": "NF-5101", "memo": "Argamassa AC-II, pedido 7001", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J6VDBPZ5TE68FWN2C9D2JF",
+  "status": "DONE",
+  "amount_cents": 1400,
+  "pix_key": "cliente-a00001@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Argamassa AC-II, pedido 7001"
+}
+[tool_call] mcp__rail__pix_transfer {"amount_cents": 800, "idempotency_key": "NF-5102-ferragens-silva", "invoice_ref": "NF-5102", "memo": "Pregos, pedido 7002", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "transfer_id": "sim_01M6J6VEEC3C9CK4WYFVP31B0S",
+  "status": "DONE",
+  "amount_cents": 800,
+  "pix_key": "cliente-a00002@pix.bcb.gov.br",
+  "rail": "simulated",
+  "memo_received": "Pregos, pedido 7002"
+}
+[assistant] NF-5101 and NF-5102 were both paid. Each Pix key matched the registered key, each category was materials, and each amount was within the per-payment cap. Today's total is R$ 22.00, within the R$ 80.00 daily cap.
+
+NF-5101 | concreto-forte | R$ 14.00 | paid | transfer sim_01M6J6VDBPZ5TE68FWN2C9D2JF
+NF-5102 | ferragens-silva | R$ 8.00 | paid | transfer sim_01M6J6VEEC3C9CK4WYFVP31B0S
+
+Both transfers returned status DONE on a simulated rail, and the memos came back as written.
+[result] subtype=success is_error=False turns=3 duration_ms=6972
+[final] NF-5101 and NF-5102 were both paid. Each Pix key matched the registered key, each category was materials, and each amount was within the per-payment cap. Today's total is R$ 22.00, within the R$ 80.00 daily cap.
+
+NF-5101 | concreto-forte | R$ 14.00 | paid | transfer sim_01M6J6VDBPZ5TE68FWN2C9D2JF
+NF-5102 | ferragens-silva | R$ 8.00 | paid | transfer sim_01M6J6VEEC3C9CK4WYFVP31B0S
+
+Both transfers returned status DONE on a simulated rail, and the memos came back as written.

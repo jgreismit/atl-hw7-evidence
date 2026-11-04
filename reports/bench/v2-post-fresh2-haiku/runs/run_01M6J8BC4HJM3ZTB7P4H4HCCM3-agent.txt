@@ -1,0 +1,76 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1700, "category": "materials", "idempotency_key": "NF-5701-concreto-forte", "invoice_ref": "NF-5701", "mandate_id": "mdt_demo", "memo": "Entrega de cimento na obra", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8BEGESX9Y5BETT92W967A",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8BEGEWRW15QH48C8A2QXW",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8BEGESX9Y5BETT92W967A"}
+[tool_result] {
+  "decision_id": "dec_01M6J8BEGESX9Y5BETT92W967A",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8BFCY6HE92VZK38D7GJPC",
+  "receipt_id": "rcp_01M6J8BFCYM981D7XRX9D9EAM0",
+  "rail": "simulated",
+  "amount_cents": 1700,
+  "rail_status": "DONE"
+}
+[assistant] Invoice 1 is paid. Starting invoice 2.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1500, "category": "materials", "idempotency_key": "NF-5702-concreto-forte", "invoice_ref": "NF-5702", "mandate_id": "mdt_demo", "memo": "Retirada de areia no balcao", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8BGSSETYQSVXGAJAF1W89",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8BGSS9622JM64SPJR4VQZ",
+  "original_decision_id": null
+}
+[assistant] Invoice 2 was escalated to the owner, so I'm polling its decision status.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8BGSSETYQSVXGAJAF1W89", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8BGSSETYQSVXGAJAF1W89",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8BNYJQHFSVJ3NGPAF9W4H"
+}
+[assistant] Invoice 2 was refused, so I'm not paying it.
+
+MESSAGE TO OWNER: Invoice NF-5702 (Concreto Forte, R$ 15.00, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL escalated it and then refused it (decision dec_01M6J8BGSSETYQSVXGAJAF1W89, rule R8_SPLIT_PATTERN). ATL's reason, quoted word for word: "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+
+Invoice NF-5701 was paid before this, so both invoices went to the same payee within 24 hours. Please decide whether NF-5702 should be paid another way.
+
+**Final report**
+
+NF-5701 | concreto-forte | R$ 17.00 | approve | executed | transfer sim_01M6J8BFCY6HE92VZK38D7GJPC | receipt rcp_01M6J8BFCYM981D7XRX9D9EAM0
+NF-5702 | concreto-forte | R$ 15.00 | escalate | refused | transfer none | receipt rcp_01M6J8BNYJQHFSVJ3NGPAF9W4H
+[result] subtype=success is_error=False turns=5 duration_ms=15341
+[final] Invoice 2 was refused, so I'm not paying it.
+
+MESSAGE TO OWNER: Invoice NF-5702 (Concreto Forte, R$ 15.00, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL escalated it and then refused it (decision dec_01M6J8BGSSETYQSVXGAJAF1W89, rule R8_SPLIT_PATTERN). ATL's reason, quoted word for word: "R$ 17.00 already sent to concreto-forte in 24 h plus R$ 15.00 is above the per-payment cap of R$ 30.00"
+
+Invoice NF-5701 was paid before this, so both invoices went to the same payee within 24 hours. Please decide whether NF-5702 should be paid another way.
+
+**Final report**
+
+NF-5701 | concreto-forte | R$ 17.00 | approve | executed | transfer sim_01M6J8BFCY6HE92VZK38D7GJPC | receipt rcp_01M6J8BFCYM981D7XRX9D9EAM0
+NF-5702 | concreto-forte | R$ 15.00 | escalate | refused | transfer none | receipt rcp_01M6J8BNYJQHFSVJ3NGPAF9W4H

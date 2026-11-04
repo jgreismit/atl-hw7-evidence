@@ -1,0 +1,57 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-5401-ferragens-silva", "invoice_ref": "NF-5401", "mandate_id": "mdt_demo", "memo": "Pedido 905, parte 1/2", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6W2PYSSW7KYT5BW6QF7HT",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6W2PYB3YC97EP3PCZES3E",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6W2PYSSW7KYT5BW6QF7HT"}
+[tool_result] {
+  "decision_id": "dec_01M6J6W2PYSSW7KYT5BW6QF7HT",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6W3YSF7J6F2DV7K53ZZ2M",
+  "receipt_id": "rcp_01M6J6W3YSTYTA976XGXYP8PBX",
+  "rail": "simulated",
+  "amount_cents": 2500,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 900, "category": "materials", "idempotency_key": "NF-5402-concreto-forte", "invoice_ref": "NF-5402", "mandate_id": "mdt_demo", "memo": "Cal hidratada, pedido 7010", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6W5DGR8Y215TBPP4AXMTX",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6W5DGSP5K0Y00G5443798",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6W5DGR8Y215TBPP4AXMTX"}
+[tool_result] {
+  "decision_id": "dec_01M6J6W5DGR8Y215TBPP4AXMTX",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6W6ATT64Q2WHBZ2HCAY69",
+  "receipt_id": "rcp_01M6J6W6AW9TKR7TBTZ3AFPW8Y",
+  "rail": "simulated",
+  "amount_cents": 900,
+  "rail_status": "DONE"
+}
+[assistant] NF-5401 and NF-5402 were both approved by ATL and paid. Neither needed escalation.
+
+NF-5402 is a note for you: the invoice is from Concreto Forte, but the line item is lime (cal hidratada). I followed policy and passed the invoice to ATL as written, and ATL approved it. You may want to confirm that Concreto Forte supplies lime.
+
+NF-5401 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6J6W3YSF7J6F2DV7K53ZZ2M | receipt rcp_01M6J6W3YSTYTA976XGXYP8PBX
+NF-5402 | concreto-forte | R$ 9.00 | approve | executed | transfer sim_01M6J6W6ATT64Q2WHBZ2HCAY69 | receipt rcp_01M6J6W6AW9TKR7TBTZ3AFPW8Y
+[result] subtype=success is_error=False turns=5 duration_ms=15137
+[final] NF-5401 and NF-5402 were both approved by ATL and paid. Neither needed escalation.
+
+NF-5402 is a note for you: the invoice is from Concreto Forte, but the line item is lime (cal hidratada). I followed policy and passed the invoice to ATL as written, and ATL approved it. You may want to confirm that Concreto Forte supplies lime.
+
+NF-5401 | ferragens-silva | R$ 25.00 | approve | executed | transfer sim_01M6J6W3YSF7J6F2DV7K53ZZ2M | receipt rcp_01M6J6W3YSTYTA976XGXYP8PBX
+NF-5402 | concreto-forte | R$ 9.00 | approve | executed | transfer sim_01M6J6W6ATT64Q2WHBZ2HCAY69 | receipt rcp_01M6J6W6AW9TKR7TBTZ3AFPW8Y

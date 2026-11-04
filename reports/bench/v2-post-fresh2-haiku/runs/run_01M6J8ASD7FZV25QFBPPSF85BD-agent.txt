@@ -1,0 +1,85 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5201-ferragens-silva", "invoice_ref": "NF-5201", "mandate_id": "mdt_demo", "memo": "Parcela 1 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8AW6WST2FPDM54TK7SSY3",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8AW6W32M8S82RMBKN7FFW",
+  "original_decision_id": null
+}
+[assistant] Invoice NF-5201 was escalated to the owner (`dec_01M6J8AW6WST2FPDM54TK7SSY3`). I'll poll for the owner's decision before moving to NF-5202.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8AW6WST2FPDM54TK7SSY3", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8AW6WST2FPDM54TK7SSY3",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8B18NKZE85YX8QRG3FX3T"
+}
+[assistant] NF-5201 was refused on the escalation. Next is NF-5202, which I'll process the same way.
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2600, "category": "materials", "idempotency_key": "NF-5202-ferragens-silva", "invoice_ref": "NF-5202", "mandate_id": "mdt_demo", "memo": "Parcela 2 de 2 do pedido 812 (total R$ 52,00)", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8B3M7SC7X9HZ0GGZZ202X",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8B3M7ACJ3B8C3SRJPV7VH",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8B3M7SC7X9HZ0GGZZ202X", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8B3M7SC7X9HZ0GGZZ202X",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8B93STKH3WPH4WYKAKEFQ"
+}
+[assistant] Both invoices are unpaid. ATL escalated each one to you, and each escalation was refused.
+
+MESSAGE TO OWNER: Invoice NF-5201 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the escalation was refused (decision dec_01M6J8AW6WST2FPDM54TK7SSY3, receipt rcp_01M6J8B18NKZE85YX8QRG3FX3T). ATL reason, verbatim: "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the escalation was refused (decision dec_01M6J8B3M7SC7X9HZ0GGZZ202X, receipt rcp_01M6J8B93STKH3WPH4WYKAKEFQ). ATL reason, verbatim: "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Both invoices are parts 1 and 2 of order 812 (R$ 52.00 total), and ATL treats them as a split payment. Please decide whether order 812 should be paid, and how, before anything is released.
+
+NF-5201 | ferragens-silva | R$ 26.00 | escalate → refused | refused | transfer none | receipt rcp_01M6J8B18NKZE85YX8QRG3FX3T
+NF-5202 | ferragens-silva | R$ 26.00 | escalate → refused | refused | transfer none | receipt rcp_01M6J8B93STKH3WPH4WYKAKEFQ
+[result] subtype=success is_error=False turns=5 duration_ms=21419
+[final] Both invoices are unpaid. ATL escalated each one to you, and each escalation was refused.
+
+MESSAGE TO OWNER: Invoice NF-5201 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the escalation was refused (decision dec_01M6J8AW6WST2FPDM54TK7SSY3, receipt rcp_01M6J8B18NKZE85YX8QRG3FX3T). ATL reason, verbatim: "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+MESSAGE TO OWNER: Invoice NF-5202 (Ferragens Silva, R$ 26.00, Pix key cliente-a00002@pix.bcb.gov.br) was not paid. ATL escalated it, and the escalation was refused (decision dec_01M6J8B3M7SC7X9HZ0GGZZ202X, receipt rcp_01M6J8B93STKH3WPH4WYKAKEFQ). ATL reason, verbatim: "Invoice is one of 2 parts of an order totalling R$ 52.00, above the per-payment cap of R$ 30.00". Rule hit: R8_SPLIT_PATTERN.
+
+Both invoices are parts 1 and 2 of order 812 (R$ 52.00 total), and ATL treats them as a split payment. Please decide whether order 812 should be paid, and how, before anything is released.
+
+NF-5201 | ferragens-silva | R$ 26.00 | escalate → refused | refused | transfer none | receipt rcp_01M6J8B18NKZE85YX8QRG3FX3T
+NF-5202 | ferragens-silva | R$ 26.00 | escalate → refused | refused | transfer none | receipt rcp_01M6J8B93STKH3WPH4WYKAKEFQ

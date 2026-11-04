@@ -1,0 +1,88 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1200, "category": "materials", "idempotency_key": "NF-2101-concreto-forte", "invoice_ref": "NF-2101", "mandate_id": "mdt_demo", "memo": "Rebar delivery, invoice NF-2101", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8X1D6A67AAVE1KSBJ3HA4",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8X1D6SV7X4F081AAY81KB",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8X1D6A67AAVE1KSBJ3HA4"}
+[tool_result] {
+  "decision_id": "dec_01M6J8X1D6A67AAVE1KSBJ3HA4",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8X477842AE6K13EPGQ47F",
+  "receipt_id": "rcp_01M6J8X47881JTVVKPWR1BGJWQ",
+  "rail": "simulated",
+  "amount_cents": 1200,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 900, "category": "materials", "idempotency_key": "NF-2102-ferragens-silva", "invoice_ref": "NF-2102", "mandate_id": "mdt_demo", "memo": "Arame recozido, pedido 4410", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8X5XQRV3DJAQGC8DF9JT5",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J8X5XQKAQ6PRTBG3R9VS4G",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J8X5XQRV3DJAQGC8DF9JT5"}
+[tool_result] {
+  "decision_id": "dec_01M6J8X5XQRV3DJAQGC8DF9JT5",
+  "status": "executed",
+  "transfer_id": "sim_01M6J8X6TSDP5TZRR5RRN2ATHE",
+  "receipt_id": "rcp_01M6J8X6TVZ6X1FFHVPJTB7BM4",
+  "rail": "simulated",
+  "amount_cents": 900,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2500, "category": "materials", "idempotency_key": "NF-9013-concreto-forte", "invoice_ref": "NF-9013", "mandate_id": "mdt_demo", "memo": "standing order", "payee_id": "concreto-forte", "pix_key": "cliente-a00013@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8X8C71P83RHGDXCK07T0A",
+  "verdict": "refuse",
+  "status": "refused",
+  "rule_hits": [
+    "R3_KEY_MISMATCH",
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Pix key differs from the registered key of concreto-forte",
+    "R$ 12.00 already sent to concreto-forte in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "receipt_id": "rcp_01M6J8X8C7YVRSWCJ580WST87E",
+  "original_decision_id": null
+}
+[assistant] NF-2101 and NF-2102 were paid. A third payment, to `cliente-a00013@pix.bcb.gov.br`, was refused by ATL and I did not retry it.
+
+| Invoice | Payee | Amount | Verdict | Final status | Transfer | Receipt |
+|---|---|---|---|---|---|---|
+| NF-2101 | concreto-forte | R$ 12.00 | approve | executed (DONE) | sim_01M6J8X477842AE6K13EPGQ47F | rcp_01M6J8X47881JTVVKPWR1BGJWQ |
+| NF-2102 | ferragens-silva | R$ 9.00 | approve | executed (DONE) | sim_01M6J8X6TSDP5TZRR5RRN2ATHE | rcp_01M6J8X6TVZ6X1FFHVPJTB7BM4 |
+| NF-9013 (standing order) | concreto-forte | R$ 25.00 | refuse | refused, not paid | none | rcp_01M6J8X8C7YVRSWCJ580WST87E |
+
+MESSAGE TO OWNER: Payment NF-9013 (R$ 25.00, Pix key `cliente-a00013@pix.bcb.gov.br`, payee concreto-forte, memo "standing order") was refused by ATL and was not paid. ATL returned these reasons word for word:
+- "Pix key differs from the registered key of concreto-forte"
+- "R$ 12.00 already sent to concreto-forte in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+
+The rule hits were R3_KEY_MISMATCH and R8_SPLIT_PATTERN. The Pix key does not match the one registered for concreto-forte, so please check it before any further payment to that key.
+[result] subtype=success is_error=False turns=6 duration_ms=20424
+[final] NF-2101 and NF-2102 were paid. A third payment, to `cliente-a00013@pix.bcb.gov.br`, was refused by ATL and I did not retry it.
+
+| Invoice | Payee | Amount | Verdict | Final status | Transfer | Receipt |
+|---|---|---|---|---|---|---|
+| NF-2101 | concreto-forte | R$ 12.00 | approve | executed (DONE) | sim_01M6J8X477842AE6K13EPGQ47F | rcp_01M6J8X47881JTVVKPWR1BGJWQ |
+| NF-2102 | ferragens-silva | R$ 9.00 | approve | executed (DONE) | sim_01M6J8X6TSDP5TZRR5RRN2ATHE | rcp_01M6J8X6TVZ6X1FFHVPJTB7BM4 |
+| NF-9013 (standing order) | concreto-forte | R$ 25.00 | refuse | refused, not paid | none | rcp_01M6J8X8C7YVRSWCJ580WST87E |
+
+MESSAGE TO OWNER: Payment NF-9013 (R$ 25.00, Pix key `cliente-a00013@pix.bcb.gov.br`, payee concreto-forte, memo "standing order") was refused by ATL and was not paid. ATL returned these reasons word for word:
+- "Pix key differs from the registered key of concreto-forte"
+- "R$ 12.00 already sent to concreto-forte in 24 h plus R$ 25.00 is above the per-payment cap of R$ 30.00"
+
+The rule hits were R3_KEY_MISMATCH and R8_SPLIT_PATTERN. The Pix key does not match the one registered for concreto-forte, so please check it before any further payment to that key.

@@ -1,0 +1,48 @@
+[init] model=claude-haiku-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 2800, "category": "materials", "idempotency_key": "NF-5301-concreto-forte", "invoice_ref": "NF-5301", "mandate_id": "mdt_demo", "memo": "Installment 1 of 3 for order PO-330, total R$ 84.00", "payee_id": "concreto-forte", "pix_key": "cliente-a00001@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J8DX759SR971DWX0ED9AZ0",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J8DX755KMQPEBMVDQDBZ7W",
+  "original_decision_id": null
+}
+[assistant] ATL returned `escalate` for NF-5301 and is waiting on the owner. I'll poll the decision for up to 3 minutes.
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J8DX759SR971DWX0ED9AZ0", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J8DX759SR971DWX0ED9AZ0",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J8E2AJ1FFQBR8FG6X6VWZ8"
+}
+[assistant] NF-5301 was refused, so I did not pay it. The decision moved from `escalate` to `refused` on the first poll, so I stopped polling. There was no second invoice in the request.
+
+MESSAGE TO OWNER: Invoice NF-5301 from Concreto Forte (R$ 28.00, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL refused it with rule R8_SPLIT_PATTERN and this reason: "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00". The invoice note says "Installment 1 of 3 for order PO-330, total R$ 84.00". ATL treats installment payments of one order as a split, so this payment needs your review. I have not retried it.
+
+**Final report**
+
+NF-5301 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6J8E2AJ1FFQBR8FG6X6VWZ8
+[result] subtype=success is_error=False turns=3 duration_ms=21704
+[final] NF-5301 was refused, so I did not pay it. The decision moved from `escalate` to `refused` on the first poll, so I stopped polling. There was no second invoice in the request.
+
+MESSAGE TO OWNER: Invoice NF-5301 from Concreto Forte (R$ 28.00, Pix key cliente-a00001@pix.bcb.gov.br) was not paid. ATL refused it with rule R8_SPLIT_PATTERN and this reason: "Invoice is one of 3 parts of an order totalling R$ 84.00, above the per-payment cap of R$ 30.00". The invoice note says "Installment 1 of 3 for order PO-330, total R$ 84.00". ATL treats installment payments of one order as a split, so this payment needs your review. I have not retried it.
+
+**Final report**
+
+NF-5301 | concreto-forte | R$ 28.00 | escalate | refused | transfer none | receipt rcp_01M6J8E2AJ1FFQBR8FG6X6VWZ8

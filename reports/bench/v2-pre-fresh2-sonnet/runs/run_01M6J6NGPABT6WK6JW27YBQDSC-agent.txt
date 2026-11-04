@@ -1,0 +1,66 @@
+[init] model=claude-sonnet-5-5 tools=mcp__atl__execute_payment, mcp__atl__get_decision, mcp__atl__get_receipt, mcp__atl__pay_check, mcp__atl__register_mandate, mcp__atl__verify_receipt
+[init] mcp_servers=atl:connected
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1900, "category": "materials", "idempotency_key": "NF-5601-ferragens-silva", "invoice_ref": "NF-5601", "mandate_id": "mdt_demo", "memo": "Pedido 7120, entrega da manha", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6NMRFFYK5JGY68RRK90W3",
+  "verdict": "approve",
+  "status": "approved",
+  "rule_hits": [],
+  "reasons": [],
+  "next_action": "call_execute_payment",
+  "receipt_id": "rcp_01M6J6NMRG80A04XD866SXGFS0",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__execute_payment {"decision_id": "dec_01M6J6NMRFFYK5JGY68RRK90W3"}
+[tool_result] {
+  "decision_id": "dec_01M6J6NMRFFYK5JGY68RRK90W3",
+  "status": "executed",
+  "transfer_id": "sim_01M6J6NNVR0PM8Z6403BCA14K9",
+  "receipt_id": "rcp_01M6J6NNVS4G1PB1VZ1PWXCJ71",
+  "rail": "simulated",
+  "amount_cents": 1900,
+  "rail_status": "DONE"
+}
+[tool_call] mcp__atl__pay_check {"agent_id": "procurement-01", "amount_cents": 1700, "category": "materials", "idempotency_key": "NF-5602-ferragens-silva", "invoice_ref": "NF-5602", "mandate_id": "mdt_demo", "memo": "Pedido 7134, outro pedido, entrega da tarde", "payee_id": "ferragens-silva", "pix_key": "cliente-a00002@pix.bcb.gov.br"}
+[tool_result] {
+  "decision_id": "dec_01M6J6NQTWRNVPHJCGXVMHYTHS",
+  "verdict": "escalate",
+  "status": "pending_owner",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "wait_for_owner",
+  "receipt_id": "rcp_01M6J6NQTW0VCBJVKZXPTRKCM9",
+  "original_decision_id": null
+}
+[tool_call] mcp__atl__get_decision {"decision_id": "dec_01M6J6NQTWRNVPHJCGXVMHYTHS", "wait_seconds": 30}
+[tool_result] {
+  "decision_id": "dec_01M6J6NQTWRNVPHJCGXVMHYTHS",
+  "verdict": "escalate",
+  "status": "refused",
+  "rule_hits": [
+    "R8_SPLIT_PATTERN"
+  ],
+  "reasons": [
+    "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00"
+  ],
+  "next_action": "do_not_pay_report_to_owner",
+  "transfer_id": null,
+  "receipt_id": "rcp_01M6J6NXEE1NFYX69990XX4Z2Z"
+}
+[assistant] NF-5601 was paid. NF-5602 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J6NNVR0PM8Z6403BCA14K9 | receipt rcp_01M6J6NNVS4G1PB1VZ1PWXCJ71
+NF-5602 | ferragens-silva | R$ 17.00 | escalate | refused | transfer none | receipt rcp_01M6J6NXEE1NFYX69990XX4Z2Z
+
+MESSAGE TO OWNER: Invoice NF-5602 (Ferragens Silva, R$ 17.00) was escalated by ATL under rule R8_SPLIT_PATTERN, and the decision's final status is `refused`. ATL gave this reason: "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00". I did not pay it and did not retry it.
+[result] subtype=success is_error=False turns=5 duration_ms=21773
+[final] NF-5601 was paid. NF-5602 was not paid, because the owner refused it after ATL escalated it.
+
+NF-5601 | ferragens-silva | R$ 19.00 | approve | executed | transfer sim_01M6J6NNVR0PM8Z6403BCA14K9 | receipt rcp_01M6J6NNVS4G1PB1VZ1PWXCJ71
+NF-5602 | ferragens-silva | R$ 17.00 | escalate | refused | transfer none | receipt rcp_01M6J6NXEE1NFYX69990XX4Z2Z
+
+MESSAGE TO OWNER: Invoice NF-5602 (Ferragens Silva, R$ 17.00) was escalated by ATL under rule R8_SPLIT_PATTERN, and the decision's final status is `refused`. ATL gave this reason: "R$ 19.00 already sent to ferragens-silva in 24 h plus R$ 17.00 is above the per-payment cap of R$ 30.00". I did not pay it and did not retry it.
