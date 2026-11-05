@@ -5,7 +5,7 @@ MIT MAS.665, Fall 2026. Team: **Geraldo Rodrigues** and **Marlon Pascoal**.
 This public repository holds the execution evidence for our HW7 report. The ATL source code is in the team's private repository (`marlonpascoal/bank-agent`, tag `hw7-v1`); everything needed to check the results is here.
 
 - Report: [docs/hw7/hw7-report.pdf](docs/hw7/hw7-report.pdf) (iteration 1), [docs/hw7/hw7-report-v2.pdf](docs/hw7/hw7-report-v2.pdf) (iterations 1 and 2)
-- Explainer animation (illustration only, not evidence): [docs/hw7/atl-pixel-animation.mp4](docs/hw7/atl-pixel-animation.mp4)
+- Explainer video (illustration only, not evidence): [narrated, 85 s](docs/hw7/atl-pixel-animation-narrated.mp4), [silent, 52 s](docs/hw7/atl-pixel-animation.mp4); made with [atl_pixel.py](docs/hw7/atl_pixel.py) and [narrate.py](docs/hw7/narrate.py)
 - The same files as one zip: see the [v1 release](../../releases/tag/v1)
 
 ## What was tested

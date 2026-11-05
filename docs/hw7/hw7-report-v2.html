@@ -20,12 +20,13 @@
   .box { background: #f6f6f6; border-left: 3px solid #888; padding: 5px 8px; margin: 6px 0; }
   code { font-family: Menlo, monospace; font-size: 8.6pt; background: #f2f2f2; padding: 0 2px; }
   .pb { page-break-before: always; }
+  a { color: #1a4fb4; }
 </style>
 </head>
 <body>
 
 <h1>HW7: Benchmarking the Agent Trust Layer (v2, two iterations)</h1>
-<p class="sub">MIT MAS.665, Fall 2026. Team: Geraldo Rodrigues, Marlon Pascoal. <b>Evidence (public): <code>github.com/jgreismit/atl-hw7-evidence</code></b>, with an index of the key runs in its README and a zip in its release. ATL source: private repository <code>marlonpascoal/bank-agent</code>, tag <code>hw7-v1</code> (iteration 1) and branch <code>atl-v2</code> (iteration 2). Sections 1 to 6 are unchanged from the first submission draft; section 7 adds the second iteration. A 52-second explainer animation of where ATL sits is in <code>docs/hw7/atl-pixel-animation.mp4</code> (illustration only, not evidence).</p>
+<p class="sub">MIT MAS.665, Fall 2026. Team: Geraldo Rodrigues, Marlon Pascoal. <b>Evidence (public): <a href="https://github.com/jgreismit/atl-hw7-evidence">github.com/jgreismit/atl-hw7-evidence</a></b>, with an index of the key runs in its README and a zip in its release. ATL source: private repository <code>marlonpascoal/bank-agent</code>, tag <code>hw7-v1</code> (iteration 1) and branch <code>atl-v2</code> (iteration 2). Sections 1 to 6 are unchanged from the first submission draft; section 7 adds the second iteration. <b>Explainer video</b> (85 s, narrated, illustration only, not evidence): <a href="https://github.com/jgreismit/atl-hw7-evidence/raw/main/docs/hw7/atl-pixel-animation-narrated.mp4">atl-pixel-animation-narrated.mp4</a>.</p>
 <p class="sub"><b>Contributions.</b> Geraldo Rodrigues: HW7 claim and baseline, owner policy and labeled cases, benchmark harness and baseline server, all runs, the R4 change and retest, the second iteration (R8 change, new fresh cases, guarded baseline, attack battery), this report. Marlon Pascoal: the HW6 Agent Trust Layer MVP that this benchmark evaluates (built with Geraldo), Asaas sandbox account.</p>
 
 <h2>1. Claim</h2>
@@ -38,7 +39,7 @@
 </ul>
 
 <figure style="margin:8px 0 4px;text-align:center"><img src="atl-video-frame.png" alt="Pixel animation frame: supplier agents put invoices on a belt, the AI agent asks pay_check, the ATL gate refuses a bank-change invoice with rule R3, the owner agent sits in its office, the Pix rail vault is on the right" style="width:78%;image-rendering:pixelated;border:1px solid #c8c8c8">
-<figcaption class="sub">Figure 1. Frame from the explainer animation (<code>docs/hw7/atl-pixel-animation.mp4</code>): every payment the AI agent wants to make passes the ATL gate before it reaches the Pix rail; here a bank-change invoice is refused by R3. Illustration only, not evidence.</figcaption></figure>
+<figcaption class="sub">Figure 1. Frame from the <a href="https://github.com/jgreismit/atl-hw7-evidence/raw/main/docs/hw7/atl-pixel-animation-narrated.mp4">explainer video</a>: every payment the AI agent wants to make passes the ATL gate before it reaches the Pix rail; here a bank-change invoice is refused by R3. Illustration only, not evidence.</figcaption></figure>
 <h2>2. Baseline</h2>
 <p>The <b>same Claude Code agent</b> (same model, same invoices, same 10-minute timeout, same empty working directory, no file, shell or web tools) with ATL removed:</p>
 <table>
@@ -147,7 +148,7 @@
 <p>Requirements: macOS or Linux, <code>uv</code>, Claude Code logged in. No payment credentials are needed (simulated rail).</p>
 <p><code>git checkout hw7-benchmark</code>, then: <code>make check</code> (offline tests) · <code>make bench-replay</code> (rules only, no model cost) · <code>uv run python -m eval.harness --reps 3 --jobs 4 --model sonnet --out reports/bench/my-run</code> · <code>uv run python -m eval.report reports/bench/my-run</code> · stress and compromised tests: add <code>--split stress</code> or <code>--compromised --episodes T01,T02,F01</code>. To compare before and after the change, check out commit <code>173efd6</code> (before) and <code>15ae29b</code> (after).</p>
 <p><b>Iteration 2:</b> <code>git checkout atl-v2</code>; fresh2 cases: <code>--split fresh2 --modes atl,baseline,guarded</code>; attack battery: <code>--episodes T01,F01,G01 --modes atl,baseline,guarded --attacks standing_order,extra_to_registered,duplicate,split_drain</code>; before and after the R8 change: commits <code>b958757</code> and <code>7e948c1</code>; all v2 tables: <code>uv run python -m eval.summary_v2</code>.</p>
-<p><b>Execution evidence</b> (in <code>github.com/jgreismit/atl-hw7-evidence</code>, paths relative to its root): per run, the ATL tool-call log <code>runs/&lt;run_id&gt;.jsonl</code>, the agent transcript <code>-agent.txt</code> and raw stream <code>-agent.jsonl</code>, and the rail ledger <code>-ledger.json</code>; per benchmark, <code>results.jsonl</code> (one line per invoice outcome), <code>runs.jsonl</code> (cost, tokens, time, rule hits) and <code>REPORT*.md</code>. No credentials or private data are included; <code>make secret-scan</code> reports 0 findings.</p>
+<p><b>Execution evidence</b> (in <a href="https://github.com/jgreismit/atl-hw7-evidence">github.com/jgreismit/atl-hw7-evidence</a>, paths relative to its root): per run, the ATL tool-call log <code>runs/&lt;run_id&gt;.jsonl</code>, the agent transcript <code>-agent.txt</code> and raw stream <code>-agent.jsonl</code>, and the rail ledger <code>-ledger.json</code>; per benchmark, <code>results.jsonl</code> (one line per invoice outcome), <code>runs.jsonl</code> (cost, tokens, time, rule hits) and <code>REPORT*.md</code>. No credentials or private data are included; <code>make secret-scan</code> reports 0 findings.</p>
 
 </body>
 </html>
