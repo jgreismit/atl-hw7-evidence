@@ -26,7 +26,7 @@
 <body>
 
 <h1>HW7: Benchmarking the Agent Trust Layer (v2, two iterations)</h1>
-<p class="sub">MIT MAS.665, Fall 2026. Team: Geraldo Rodrigues, Marlon Pascoal. <b>Evidence (public): <a href="https://github.com/jgreismit/atl-hw7-evidence">github.com/jgreismit/atl-hw7-evidence</a></b>, with an index of the key runs in its README and a zip in its release. ATL source: private repository <code>marlonpascoal/bank-agent</code>, tag <code>hw7-v1</code> (iteration 1) and branch <code>atl-v2</code> (iteration 2). Sections 1 to 6 are unchanged from the first submission draft; section 7 adds the second iteration. <b>Explainer video</b> (85 s, narrated, illustration only, not evidence): <a href="https://github.com/jgreismit/atl-hw7-evidence/raw/main/docs/hw7/atl-pixel-animation-narrated.mp4">atl-pixel-animation-narrated.mp4</a>.</p>
+<p class="sub">MIT MAS.665, Fall 2026. Team: Geraldo Rodrigues, Marlon Pascoal. <b>Evidence (public): <a href="https://github.com/jgreismit/atl-hw7-evidence">github.com/jgreismit/atl-hw7-evidence</a></b>, with an index of the key runs in its README and a zip in its release. ATL source: private repository <code>marlonpascoal/bank-agent</code>, tag <code>hw7-v1</code> (iteration 1) and branch <code>atl-v2</code> (iteration 2). Sections 1 to 6 are unchanged from the first submission draft; section 7 adds the second iteration. <b>Explainer video</b> (85 s, narrated, illustration only, not evidence): <a href="https://cdn.jsdelivr.net/gh/jgreismit/atl-hw7-evidence@5604d6850da23d3247b4fb9335c180d5a2d3bc46/docs/hw7/atl-pixel-animation-narrated.mp4">atl-pixel-animation-narrated.mp4</a>.</p>
 <p class="sub"><b>Contributions.</b> Geraldo Rodrigues: HW7 claim and baseline, owner policy and labeled cases, benchmark harness and baseline server, all runs, the R4 change and retest, the second iteration (R8 change, new fresh cases, guarded baseline, attack battery), this report. Marlon Pascoal: the HW6 Agent Trust Layer MVP that this benchmark evaluates (built with Geraldo), Asaas sandbox account.</p>
 
 <h2>1. Claim</h2>
@@ -39,7 +39,7 @@
 </ul>
 
 <figure style="margin:8px 0 4px;text-align:center"><img src="atl-video-frame.png" alt="Pixel animation frame: supplier agents put invoices on a belt, the AI agent asks pay_check, the ATL gate refuses a bank-change invoice with rule R3, the owner agent sits in its office, the Pix rail vault is on the right" style="width:78%;image-rendering:pixelated;border:1px solid #c8c8c8">
-<figcaption class="sub">Figure 1. Frame from the <a href="https://github.com/jgreismit/atl-hw7-evidence/raw/main/docs/hw7/atl-pixel-animation-narrated.mp4">explainer video</a>: every payment the AI agent wants to make passes the ATL gate before it reaches the Pix rail; here a bank-change invoice is refused by R3. Illustration only, not evidence.</figcaption></figure>
+<figcaption class="sub">Figure 1. Frame from the <a href="https://cdn.jsdelivr.net/gh/jgreismit/atl-hw7-evidence@5604d6850da23d3247b4fb9335c180d5a2d3bc46/docs/hw7/atl-pixel-animation-narrated.mp4">explainer video</a>: every payment the AI agent wants to make passes the ATL gate before it reaches the Pix rail; here a bank-change invoice is refused by R3. Illustration only, not evidence.</figcaption></figure>
 <h2>2. Baseline</h2>
 <p>The <b>same Claude Code agent</b> (same model, same invoices, same 10-minute timeout, same empty working directory, no file, shell or web tools) with ATL removed:</p>
 <table>
